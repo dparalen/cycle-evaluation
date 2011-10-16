@@ -1,0 +1,11 @@
+Excess work done on this call (perhaps wrong Dfun type).
+Run with full_output = 1 to get quantitative information.
+(array([  3.80000000e-04,   1.38894865e+10,   0.00000000e+00, ...,
+         0.00000000e+00,   0.00000000e+00,   0.00000000e+00]), array([  9.50000000e-04,   1.38894865e+10,   0.00000000e+00, ...,
+         0.00000000e+00,   0.00000000e+00,   0.00000000e+00]), array([  3.80000000e-04,   1.38894865e+10,   0.00000000e+00, ...,
+         0.00000000e+00,   0.00000000e+00,   0.00000000e+00]))
+Excess work done on this call (perhaps wrong Dfun type).
+ lsoda--  at current t (=r1), mxstep (=i1) steps   
+       taken on this call before reaching tout     
+      In above message,  I1 =       500
+      In above message,  R1 =  0.2229557791395E-01
