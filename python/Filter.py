@@ -7,11 +7,10 @@ logger = logging.getLogger(__name__)
 def eval(element, dimValues):
 	ret = []
 	for e, values in zip(element, dimValues):
-		ret.append(False)
+		#logger.debug("e: %s, values: %s" % (e, values))
 		for v in values:
-			if e > v:
-				ret[-1] = True
-	# logger.debug("eval: %s" % ret)
+			ret.append(e > v)
+	# logger.debug("eval: ret: %s,  element: %s" % (ret, element))
 	return ret
 
 class SwitchCmp:
@@ -20,8 +19,8 @@ class SwitchCmp:
 
 	def __call__(self, new):
 		for o, n in zip (self.old, new):
-			if o ^ n:
-				# logger.debug("switchCmp: changed: (self.old: %s, new: %s)" % (self.old, new))
+			if o != n:
+				#logger.debug("switchCmp: changed: (self.old: %s, new: %s)" % (self.old, new))
 				self.old = new
 				return True
 		return False
@@ -34,13 +33,12 @@ class ChFilter:
 	returns a new array containing only passed original elements
 	"""
 	def __init__(self, a, dimValues):
-		self.a = a
 		self.dimValues = dimValues
+		self.a = a
 		sw = SwitchCmp(eval(a[...,0], dimValues))
-		self.indexes = filter(lambda x: sw(eval(self.a[...,x], dimValues)), range(1, self.a.shape[-1]))
-	@property
-	def result(self):
-		return self.a[...,self.indexes]
+		self.indexes = filter(lambda x: sw(eval(a[...,x], dimValues)), range(1, a.shape[-1]))
+		# logger.debug("indexes: %s" % self.indexes)
+		self.result = a[...,self.indexes]
 
 if __name__ == "__main__":
 	from numpy import array, arange

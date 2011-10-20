@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-from Brent import CycleDetect
+#from Brent import CycleDetect
+from Sven import CycleDetect
 from Lotka_Volterra import LotkaVolterra2D
 from Filter import ChFilter
 from numpy import *
@@ -15,7 +16,7 @@ def fltMap(sim):
 	return ChFilter(sim.result.T, filter_)
 
 def cycMap(flt):
-	return CycleDetect(flt.result, epsilon=0.3)
+	return CycleDetect(flt.result, epsilon=0.03)
 
 if __name__ == "__main__":
 	# create a regular grid of init value combinations
@@ -26,7 +27,7 @@ if __name__ == "__main__":
 	# create a time "axis"
 	timeSpace = linspace(0, 10, 2000)
 	# create a filter representation
-	filter_ = array([linspace(1, 11, 10),[1., 2.]])
+	filter_ = array([linspace(1, 11, 4),linspace(1, 11, 4)])
 	p = Pool(processes=16)
 	simData = p.map(simMap, Z.T, chunksize=8)
 	fltData = p.map(fltMap, simData, chunksize=8)

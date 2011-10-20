@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from Brent import CycleDetect
+#from Sven import CycleDetect
 from Wilhelm import Wilhelm2D
 from Filter import ChFilter
 from Histogram import Histogram2D
@@ -15,7 +16,7 @@ def fltMap(sim):
 	return ChFilter(sim.result.T, filter_)
 
 def cycMap(flt):
-	return CycleDetect(flt.result, epsilon=0.005)
+	return CycleDetect(flt.result )#, epsilon=0.5)
 
 if __name__ == "__main__":
 	logging.basicConfig(level=logging.DEBUG)
@@ -27,7 +28,7 @@ if __name__ == "__main__":
 	# create a time "axis"
 	timeSpace = linspace(0, 2, 2000)
 	# create a filter representation
-	filter_ = array([[4., 4.5, 5., 5.5, 6., 6.5, 7, 7.5],[1]])
+	filter_ = array([[4., 4.5, 5., 5.5, 6., 6.5, 7, 7.5, 7.781],[1, 7.554]])
 	p = Pool(processes=16)
 	simData = p.map(simMap, Z.T, chunksize=8)
 	fltData = p.map(fltMap, simData, chunksize=8)

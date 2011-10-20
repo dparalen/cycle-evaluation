@@ -23,7 +23,7 @@ class CycleDetect:
 
 	@property
 	def _length(self):
-		if self.a.shape[-1] == 1:
+		if self.a.shape[-1] <= 1:
 			# 1-element array can't contain a cycle
 			return 0
 		power = lambda_ = 1
@@ -82,4 +82,5 @@ if __name__ ==  "__main__":
 	pylab.plot(lv.result.T[0], lv.result.T[1], 'g.', f.result[0], f.result[1], 'r.',
 			lv.result.T[...,indexes][0], lv.result.T[...,indexes][1], 'b.',
 			f.result[...,findexes][0], f.result[...,findexes][1], 'rs')
+	print c.start, c.length
 	pylab.show()
