@@ -12,14 +12,20 @@ class NameAtom(ex.NameAtom):
 	# name evaluation for a data object
 	def __call__(self, data=None):
 		# data is "queried" for self.Contents and its value is returned
+		logger.debug("NameAtom: call: data: %s" % str(data))
 		if not data:
 			return data
 		try:
 			ret = data[self.Contents]
 			logger.debug("data[%s] -> %s" % (str(self.Contents), str(ret)))
-		except AttributeError:
-			ret = getattr(data, self.Contents)
-			logger.debug("getattr(data, %s) -> %s" % (str(self.Contents), str(ret)))
+		except:
+			try:
+				ret = getattr(data, self.Contents)
+				logger.debug("getattr(data, %s) -> %s" % (str(self.Contents), str(ret)))
+			except:
+				# last chance to retrieve ;)
+				ret = data
+				logger.debug("data -> %s" % str(ret))
 		return ret
 
 class ValueAtom(ex.ValueAtom):
@@ -116,6 +122,9 @@ class NAryOperatorExpression(ex.NAryOperatorExpression):
 	# NAry operator evaluation for data
 	def __call__(self, data):
 		# apply self.Operator to SubExpressions evaluated on data
+		# print type(self.Expressions)
+		logger.debug("NAryOperatorExpression: call: operator: %s, expressions: %s" % \
+				(str(self.Operator), str(self.Expressions)))
 		return reduce(self.Operator, map(lambda x: x(data), self.Expressions))
 
 class UnaryOperatorExpression(ex.UnaryOperatorExpression):
@@ -171,7 +180,7 @@ if __name__ == "__main__":
 	boe1 = BinaryOperatorExpression (w, ae1, ae2)
 	boe2 = BinaryOperatorExpression (ge, ae1, ae2)
 	boe3 = BinaryOperatorExpression (ne, boe1, ae3)
-	noe1 = NAryOperatorExpression (anOr, t, boe3, boe2)
+	noe1 = NAryOperatorExpression (anOr, Expressions = [t, boe3, boe2])
 	uoe1 = UnaryOperatorExpression (n, noe1)
 	print "A complex example structure:"
 	print uoe1
