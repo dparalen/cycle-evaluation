@@ -3,7 +3,6 @@
 # all __str__ methods dump in almost a pythonic syntax to make the output more readable
 # all __repr__ methods dump in "constructor" syntax
 
-import abc
 from abc import ABCMeta
 from collections import namedtuple
 
@@ -214,9 +213,9 @@ class NotEqual(Binary, Operator):
 class Expression:
 	# to denote something is an Expression object
 	__metaclass__ = ABCMeta
-	#@abc.abstractmethod
-	#def __repr__(self):
-	#	return None
+
+	def __repr__(self):
+		return "Expression()"
 
 # OPERATOR EXPRESSION TYPES
 
@@ -235,23 +234,21 @@ class BinaryOperatorExpression(
 	def __str__(self):
 		return "(" + str(self.LeftExpression) + " " + str(self.Operator) + " " + str(self.RightExpression) + ")"
 
-class NAryOperatorExpression(Expression):
+class NAryOperatorExpression(
+	namedtuple('NAryOperatorExpression', 'Operator, Expressions'),
+	Expression):
 	# specialized NAry Expression type
 
-	def __init__(self, anOperator, *args, **kvargs):
+	def __init__(self, anOperator, Expressions):
 		# checking, etc
 		assert isinstance(anOperator, NAry)
 		assert not isinstance(anOperator, Unary)
 		assert not isinstance(anOperator, Binary)
-		try:
-			self.Expressions = list(args) + kvargs["Expressions"]
-		except KeyError:
-			self.Expressions = list(args)
-		self.Operator = anOperator
+		assert isinstance(Expressions, _Iterable)
 
 	def __str__(self):
 		return "(" + str(self.Operator) + " " + \
-				", ".join(map(str, self.Expressions)) + ")"
+		" ".join(map(str, self.Expressions)) + ")"
 
 class UnaryOperatorExpression(
 	namedtuple('UnaryOperatorExpression', 'Operator, Expression'),

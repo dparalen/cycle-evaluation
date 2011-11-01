@@ -4,6 +4,7 @@ import LTLExpression as le
 import ExpressionEvaluation as ee
 import ExpressionStructure as ex
 import numpy as np
+import itertools as it
 import logging, os
 
 logger = logging.getLogger(__name__)
@@ -17,7 +18,9 @@ def _ltl_expressions(Expressions):
 def _split_expressions(Expressions):
 	# returns a tuple of ltl and other expressions found in Expressions
 	ltl = _ltl_expressions(Expressions)
-	return ltl, list(set(Expressions) - set(ltl))
+	ret = ltl, filter(lambda x: not isinstance(x, le.LTL), Expressions)
+	logger.debug("_split_expressions: %s" % repr(ret))
+	return ret
 
 def _ltl_expression(Expression):
 	return isinstance(Expression, le.LTL)
@@ -97,9 +100,8 @@ class Release(le.Release):
 		if _ltl_expression(LeftExpression) and \
 				_ltl_expression(RightExpression):
 			return ee.NAryOperatorExpression(ee.Or(), Expressions = \
-				[ee.NAryOperatorExpression(ee.And(), Expressions = [LeftExpression(j, length)] +
-					[RightExpression(n, length) for n in xrange(position, j)])
-						for j in xrange(position, length)])
+				[ee.NAryOperatorExpression(ee.And(), Expressions = [LeftExpression(j, length)] + \
+					[RightExpression(n, length) for n in xrange(position, j)]) for j in xrange(position, length)])
 		if _ltl_expression(LeftExpression):
 			return ee.NAryOperatorExpression(ee.Or(), Expressions = \
 					[ee.NAryOperatorExpression(ee.And(), Expressions = [LeftExpression(j,
@@ -157,7 +159,7 @@ if __name__ == "__main__":
 	gt = ee.Greater()
 	x = X()
 	n = ee.NameAtom(x)
-	v = ee.ValueAtom(5)
+	v = ee.ValueAtom(8)
 	ne = ee.AtomExpression(n)
 	ve = ee.AtomExpression(v)
 	gte = ee.BinaryOperatorExpression(gt, ne, ve)
@@ -167,4 +169,25 @@ if __name__ == "__main__":
 	ev = ex(0, 7)
 	print "The expression expanded: %s" % str(ev)
 	print "Evaluation on data: %s" % str(ev(data))
+
+	# a complex example: (x > 2) R (X (x == 3) && F (x > 5))
+	va0 = ee.ValueAtom(2)
+	va1 = ee.ValueAtom(3)
+	va2 = ee.ValueAtom(5)
+	vae0 = ee.AtomExpression(va0)
+	vae1 = ee.AtomExpression(va1)
+	vae2 = ee.AtomExpression(va2)
+	be0 = ee.BinaryOperatorExpression(ee.Greater(), ne, vae0)
+	be1 = ee.BinaryOperatorExpression(ee.Equal(), ne, vae1)
+	be2 = ee.BinaryOperatorExpression(ee.Greater(), ne, vae2)
+	ue0 = LTLUnaryOperatorExpression(Next(), be1)
+	ue1 = LTLUnaryOperatorExpression(Finally(), be2)
+	ne0 = LTLNAryOperatorExpression(And(), [ue0, ue1])
+	be3 = LTLBinaryOperatorExpression(Release(), be0, ne0)
+	print "Another expression: %s" % str(be3)
+	ev = be3(0, 7)
+	print "Another expression expanded: %s" % str(ev)
+	print "Another expanded expression evaluated on data: %s: %s" % (data,
+			str(ev(data)))
+
 
