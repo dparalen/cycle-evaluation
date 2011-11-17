@@ -1,0 +1,123 @@
+\documentclass[11pt]{fithesis}
+\usepackage[plainpages=false, pdfpagelabels]{hyperref}
+%\usepackage{amssym}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{graphics}
+
+%
+\newcommand{\ltl}{\textsc{ltl}~}
+\newcommand{\Next}{\emph{Next}~}
+\newcommand{\mM}{\mathcal{M}}
+\newcommand{\mD}{\mathcal{D}}
+\newcommand{\mC}{\mathcal{C}}
+\newcommand{\mI}{\mathcal{I}}
+\newcommand{\mReal}{\mathbb{R}}
+\newcommand{\mNatural}{\mathbb{N}}
+%
+\newtheorem{mydef}{Definition}
+%
+\thesistitle{Simulation Analysis of Large-scale Dynamic Systems}
+\thesissubtitle{Bachelors Thesis}
+\thesisstudent{Milan Kov\'{a}\v{c}ik}
+\thesiswoman{false}
+\thesisfaculty{fi}
+\thesisyear{Fall 2011}
+\thesislang{en}
+\thesisadvisor{David \v{S}afr\'{a}nek}
+%
+
+\begin{document}
+
+\FrontMatter
+\ThesisTitlePage
+
+\begin{ThesisDeclaration}
+\DeclarationText
+\AdvisorName
+\end{ThesisDeclaration}
+
+%\begin{ThesisThanks}
+%\end{ThesisThanks}
+
+%\begin{ThesisAbstract}
+%\end{ThesisAbstract}
+
+%\begin{ThesisKeyWords}
+%\end{ThesisKeyWords}
+
+\MainMatter
+\tableofcontents
+\chapter{Methodology}
+\section{Framework Description}
+The framework main task is to select traces starting at the seeds of initial conditions
+that fulfil given \ltl specification over the time period provided.
+Therefore two main components are identified: \em simulation and model checking\rm{}.
+In the framework, the output of the simulation is processed by the
+model checking component to verify the LTL formula validity of a particular
+trace. Having verified all traces of the initial conditions set, the framework
+marks the seeds fulfiling the formula to provide the user with an output. 
+User then could refine her initial conditions specification for further
+system evaluation. In this fashion, the user might iterate till a~subjective satisfaction
+with the system evaluation was reached.
+
+In such a~session, the framework provides simulation traces of the system observed over
+the time specified. The simulation being rather straightforward, a~common integrator -- such as provided in the \textsc{lsoda}
+\cite{lsoda} package -- may be used.
+An output in this case is an approximation of a~continuous solution of the dynamic system.
+
+Even though the approximation is discrete at the finest grain, such a~detail isn't reasonable
+for the model checking part of the framework. Especially, the \Next operator semantics doesn't make sense over the
+(aproximated) continuous domain. If one selects $x_1 = Next(x_0)$, many system points can stil be inserted
+inbetween $x_0$ and $x_1$ as other options for $x_1$ making the original $x_1$ point selection invalid.
+This happens e.g.~when the precision of the integration changes \cite{integration}.
+As a~consequence, even on a~single trace, an~\ltl formula evaluation might gave both the positive and the negative result
+based just on the precision the sysetem was integrated with. 
+%(Thus a discrete and deterministic trace points assignment mechanism is required.)
+
+However, considering the \em constants \rm present within the formula as parts of the real \em constrains \rm put on the 
+trajectory to be fulfiled, a~partitioning of the trace naturarlly emerges. Adding time to the consideration, one is able to
+observe particular constants--boundaries being crossed by the system as it evolves. \em Focusing just on the moment of
+the boundary-crossing, one gains a~series of discrete events the system exhibits\rm{}.
+
+Such an~observation resembles what one might call \em a~filter \rm and indeed a~filtering sub-component of the framework
+can be identified this way. Moreover, as the same constants would be used for an~\ltl b\"{u}chi automaton representation of the formula, 
+crossing any of them would make the representation change its internal state as well.
+Thus, considering the state change -- \Next semantics, the construction seems valid from the model checking point of view.
+
+The main focus of the tool being seeds marking with the \ltl evaluation result, one could discard the original simulation
+data in favor of the discrete points.
+Doing so would have the benefit of memory usage relaxation which, as the framework evaluation suggests, would be quite substantial.
+
+\section{Filter}
+As already mentioned, if the focus is put on the sole moment of boundary
+crossing, discrete states are obtained from a~continuous system.
+Following are definitions that describe the filtering.
+\begin{mydef}[State Change]
+Given a~dynamic system $\mD$, a~set of dimension indexes $Dim$, an~\ltl formula $\varphi$ and an~initial
+condition $i \in \mI$, let $\varphi$ contain
+$\mC\,\subset\,\mReal, |\mC|\,\in\,\mNatural$, a~set of constants related to
+particular dimension describing the constrains. Furthermore, let
+$t_0, t \in \mReal^{+}, t_0~<~t$, two points in time.
+$\mD(i, t)$ exhibits a~State~Change~$\sigma$ with regards to $\mD(i,~t_0)$ iff
+$$\exists~d~\in~Dim, c_d~\in~\mC.\quad \mD(i,~t_0)[d]~>~c_d~\neq~\mD(i,~t)[d]~>~c_d.$$
+Here $\mD(i,~t_0)[d]$ denotes value of the dynamic system expressed in time
+$t_0$ in dimension $d$ staring at initial condition $i$; $c_d$
+is a~constant related to dimension $d$.
+\end{mydef}
+To denote a~system changed its state, the notation
+$\mD(i,~t_0)~\sigma~\mD(i,~t)$ can be used.
+In fact, the $<$ relation may be used in $\sigma$ definition as well --
+the purpose is only to obtain a~true--false value.
+ 
+%\begin{mydef}[Filter]
+%
+%\end{mydef}
+% list of figures
+% list of tables
+\bibliographystyle{plain}
+%\bibliography{thesis.bib}
+%
+
+\end{document}  

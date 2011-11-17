@@ -214,15 +214,16 @@ if __name__ == "__main__":
 	be3 = ee.BinaryOperatorExpression(ee.GreaterEqual(), ne, vae2)
 	be4 = LTLBinaryOperatorExpression(Until(), be2, be3)
 	# (x <= 3) U (x >= 4)
-	print be2
-	expanded = be2(0, 7)
-	print expanded
-	print expanded(data)
+	#print be2
+	#expanded = be2(0, 7)
+	#print expanded
+	#print expanded(data)
 	# ((x <=3) U (x >=4)) U (x >=6)
 	print be4
 	expanded = be4(0, 7)
 	print expanded
 	print expanded(data)
+	print expanded.cahce.items().length
 	# a complex example: (x > 2) R (X (x == 3) && F (x > 5))
 #	va0 = ee.ValueAtom(2)
 #	va1 = ee.ValueAtom(3)
