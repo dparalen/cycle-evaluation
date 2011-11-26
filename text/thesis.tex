@@ -1,10 +1,11 @@
-\documentclass[11pt]{fithesis}
+\documentclass[12pt,oneside,draft]{fithesis}
 \usepackage[plainpages=false, pdfpagelabels]{hyperref}
 %\usepackage{amssym}
 \usepackage{amsfonts}
 \usepackage{amsmath}
 \usepackage{amsthm}
 \usepackage{graphics}
+\usepackage{paralist}
 
 %
 \newcommand{\ltl}{\textsc{ltl}~}
@@ -13,8 +14,11 @@
 \newcommand{\mD}{\mathcal{D}}
 \newcommand{\mC}{\mathcal{C}}
 \newcommand{\mI}{\mathcal{I}}
+\newcommand{\mE}{\mathcal{E}}
+\newcommand{\mS}{\mathcal{S}}
 \newcommand{\mReal}{\mathbb{R}}
 \newcommand{\mNatural}{\mathbb{N}}
+\newcommand{\mTime}{\mathbb{T}}
 %
 \newtheorem{mydef}{Definition}
 %
@@ -49,6 +53,158 @@
 
 \MainMatter
 \tableofcontents
+\chapter{Background}
+\section{Dynamic System}
+A~dynamic system -- in this context -- abstracts from
+a~set of chemical reactions happening inside an~organizm \cite{sven}.
+In particular, it describes how the \emph{speed} of these chemical
+reactions depends on factors such as \emph{stechiometry} of their
+reactants and other influences taking part in the reactions.
+The time and dynamic equation definitions are taken from
+\cite{pospisil}.
+\begin{mydef}[Time]
+Let $\mTime$ be a~set with a~total linear-order relation ``$<$",
+with the operator $\sigma$; $\forall t \in \mTime{}.\:\exists
+\sigma{}(t) \in \mTime$:
+	\begin{equation}
+		\sigma{}(t) = inf\{s : t < s\}
+	\end{equation}
+and the operator $\varrho$; $\forall t \in \mTime{}.\:\exists
+\varrho{}(t) \in \mTime$:
+	\begin{equation}
+		\varrho{}(t) = sup\{r : r < t\}
+	\end{equation}
+and with a~continuous, order-preserving function
+	$\nu: \mTime \times \mTime \rightarrow \mReal$
+with the property:
+	\begin{equation}
+		\nu{}(t1, t3) = \nu{}(t_1, t_2) + \nu{}(t_2, t_3)
+	\end{equation}
+$\mTime$ together with these shall be refered to as the \emph{Time}.
+\end{mydef}
+The function $\nu$ may be thought of as a~distance measurement.
+The operators $\sigma$ and $\varrho$ give the \emph{next} and the
+\emph{previous}
+Time values respectivelly. The definition allows the Time
+to have an ``end" or to comprise of discrete or even
+a~finite number of points.
+
+\begin{mydef}[Time Granularity]
+Let $\mTime$ be the Time and $t \in \mTime$. Then a~function
+$\mu: \mTime \rightarrow \mReal$
+	\begin{equation}
+		\mu{}(t) = \nu{}(\sigma{}(t), t)
+	\end{equation} is called time granularity.
+\end{mydef}
+If a~continuous Time is considered, $\forall{}t\in\mTime.\:\mu{}(t) = 0$.
+A~discrete Time on the other hand may have many values of $\mu$
+depending on how $\sigma$ and $\varrho$ are defined. In some situations,
+even $\forall{}t\in\mTime.\:\mu{}(t) = c, c \in \mReal - \{0\}$ is possible,
+meaning the Time is granular with a~constant step.
+
+\begin{mydef}[Dynamic Equation]
+Let $y$ be a~state variable and $y'$ be its derivation with regard to
+Time. Furthermore, let $t \in \mTime$ be a~point in the Time.
+Then the function
+	\begin{equation}
+		y'(t)=f(t, influences)
+	\end{equation}
+denotes a~dynamic equation of the state variable $y$.
+\end{mydef}
+The influences within $f$ may represent mutual interactions of another
+state variables as well as the variable $y$ -- in which case the
+$y'$ contains a feedback loop -- with the state variable $y$.
+Furthermore, the influences may express the effect of constants to
+state variables and internal variables of the dynamic equation. In case
+the influences do not depend on Time, the function is said to be
+\emph{autonomous}.
+For particular examples of the influences with regards to
+chemical reactions see \cite{sven}.
+As far as the codomain values type of the function is considered, a~real
+is usual. Although, if a system of dynamic equations is considered, the
+type is rather a tuple of real values.
+
+\begin{mydef}[Seed]
+Let $y$ be a~state variable and $t_0 \in \mTime$ a point in Time.
+A~seed $s$ is the initial value of the variable $y$:
+	\begin{equation}
+		s=y(t_0)
+	\end{equation}
+\end{mydef}
+In most of the cases, $t_0 = 0$ as relative time measurement usually
+starts at that point. In the text, a~subscript at a~dynamic equation
+reflects the seed considered: $y'_s$.
+
+\begin{mydef}[Trace]
+Let $y'$ be a~dynamic equation of a~state variable $y$. Furthermore,
+let $s$ be a seed of $y$.
+A~trace $\pi_s$ is a~sequence of values of $y_s'(t)$ in all poitns
+of the Time considered and y initialized with the value of the seed $s$:
+	\begin{equation}
+		\pi_s = \{y'_s(t) : t \in \mTime\}
+	\end{equation}
+\end{mydef}
+
+\begin{mydef}[Dynamic Equations System]
+Let $Y'=\{y'_i:1\leq{}i\leq{}n,\:n\in\mNatural\}$ be a~set of dynamic
+equations of state variables $y_i$.
+Furthermore, let $t\in\mTime$ be a~point in Time.
+A~dynamic system is a~function
+$\mD:E\times\mTime\rightarrow\mReal^n$ mapping
+time values to tuples of particular state variable values:
+	\begin{equation}
+		\mD(Y',t)=(y'_{1}(t),y'_{2}(t),\dotsc,y'_{n}(t)).
+	\end{equation}
+\end{mydef}
+In the text, a~short form \emph{dynamic system} may be used to denote
+the same. Moreover, the first component $Y'$ is ommited in
+the rest of the text for brevity. Thus if reffered to, a~system $\mD$
+represents a~particular set of dynamic equations as well.
+
+As far as the context is considered, a~dynamic system refers
+to the change of concentrations of species $y_i$ in a~set of chemical
+reactions with regards to time. These are expressed as the influences
+of particular transition functions.
+
+The dynamic system comprising of dynamic equations, it is natural to
+extend the definition of the trace to fit the system as well.
+
+\begin{mydef}[Dynamic System Seed]
+Let $\mD$ be a~dynamic system comprising of a~set $Y'$ of dynamic
+equations $Y'=\{y'_i:1\leq{}i\leq{}n,n\in\mNatural\}$.
+Furthermore, let $t\in\mTime$ be a~point in Time.
+A~tuple $s=(s_1,s_2,\dotsc,s_n)$ of seeds $s_i$ of particular
+function $y'_i$ is a~dynamic system seed. It is applied to the functions
+as follows:
+	\begin{equation}
+		\mD_s{}(t)=(y'_{1,s_1}(t),y'_{2,s_2}(t),\dotsc{},y'_{n,s_n}(t))
+	\end{equation}
+\end{mydef}
+As well as for its equation counterpart, the seed of a dynamic system
+$\mD$ is denoted as its subscritpt in the text: $\mD_s$.
+
+\begin{mydef}[Dynamic System Trace]
+Let $\mD$ be a~dynamic equation system comprising of dynamic equations
+$Y'=\{y'_i:1\leq{}i\leq{}n,\:n\in\mNatural\}$. Furthermore, let
+$t\in\mTime$ be a~point in Time and $s=(s_1,s_2,\dotsc,s_n)$ be
+its~seed. A~sequence $\pi_s$ of tuples of $y'_{i,s_i}(t)$ values in all
+points of the Time considered is a~system trace:
+	\begin{equation}
+		\pi_s=\{\mD_s{}(t): t\in\mTime\}
+	\end{equation}
+\end{mydef}
+
+Further in the text, dynamic systems, dynamic system seeds as well as
+dynamic system traces may be indexed to refer to a~particular component:
+\begin{inparaenum}[\itshape a\upshape{})]
+	\item $\mD_i$ refers to the function $y'_i$ of the system;
+	\item $s_i$ refers to the i-th seed value within the seed tupple
+		$s$;
+	\item $\mD_{s,i}$ refers to the ``seeded" function $y'_{i,s_i}$; and
+	\item $\pi_{s,i}$ refers to a trace of a~seeded function
+		$y'_{i,s_i}$.
+\end{inparaenum}
+
 \chapter{Methodology}
 \section{Framework Description}
 The framework main task is to select traces starting at the seeds of initial conditions
@@ -95,23 +251,60 @@ As already mentioned, if the focus is put on the sole moment of boundary
 crossing, discrete states are obtained from a~continuous system.
 Following are definitions that describe the filtering.
 \begin{mydef}[State Change]
-Given a~dynamic system $\mD$, a~set of dimension indexes $Dim$, an~\ltl formula $\varphi$ and an~initial
-condition $i \in \mI$, let $\varphi$ contain
-$\mC\,\subset\,\mReal, |\mC|\,\in\,\mNatural$, a~set of constants related to
-particular dimension describing the constrains. Furthermore, let
-$t_0, t \in \mReal^{+}, t_0~<~t$, two points in time.
-$\mD(i, t)$ exhibits a~State~Change~$\sigma$ with regards to $\mD(i,~t_0)$ and
-$\varphi$ iff
-$$\exists~d~\in~Dim, c_d~\in~\mC.\quad \mD(i,~t_0)[d]~>~c_d~\neq~\mD(i,~t)[d]~>~c_d.$$
-Here $\mD(i,~t_0)[d]$ denotes value of the dynamic system expressed in time
-$t_0$ in dimension $d$ staring at initial condition $i$; $c_d$
-is a~constant related to dimension $d$.
+Given a~dynamic system $\mD$, its seed $s$ and an \ltl formula $\varphi$
+let $\varphi$ contain a set of constants $C$.
+Furthermore, let $t_0,t\in\mTime;t_0<t$ be two points in time.
+A~state change relation
+$\delta\subseteq\mTime\times\mTime$ with regards to $\mD_s$
+and $\varphi$ is a set:
+	\begin{equation}
+\delta_{\varphi_s} = \{(t_0,t):\exists{}c_i\in{}C,\mD_{s,i}(t_0)>c_i\neq
+\mD_{s,i}(t)>c_i\}
+	\end{equation}
 \end{mydef}
-To denote a~system changed its state with regards to $\varphi$, the notation
-$\mD(i,~t_0)~\sigma_\varphi~\mD(i,~t)$ can be used.
-In fact, the $<$ relation may be used in $\sigma$ definition as well --
+To denote a~system changed its state with regards to $\varphi$, the
+notation $(t_0,t)\in\delta_{\varphi_s}$ can be used.
+In fact, the $<$ relation may be used in $\delta$ definition as well --
 the purpose is only to obtain a~true--false value.
- 
+
+\begin{mydef}[Filtered Time Operators]
+Let $\mTime$ be the Time and $t\in\mTime$ a~point in Time.
+Let $\mD$ be a~dynamic system with its seed $s$.
+Furthermore, let $\varphi$ be an \textsc{ltl} formula and
+$\delta_{\varphi_s}$ a~state change relation with regards to $\mD_s$.
+A~filtered operator $\sigma_{\varphi_s}:\mTime\rightarrow\mTime$ is defined
+as follows:
+	\begin{equation}
+		\sigma_{\varphi_s}(t) = inf\{u:(t,u)\in\delta_{\varphi_s}\}
+	\end{equation}
+A~filtered operator $\varrho_{\varphi_s}:\mTime\rightarrow\mTime$ is defined
+as follows:
+	\begin{equation}
+		\varrho_{\varphi_s}(t) = sup\{u:(u,t)\in\delta_{\varphi_s}\}
+	\end{equation}
+\end{mydef}
+
+\begin{mydef}[Filtered Time]
+Let $\mD$ be a~dynamic system with a~seed $s$. Let $t_0\in\mTime$
+be a~point in Time. Furthermore, let $\varphi$ be an \textsc{ltl}
+formula. A~set $\mTime_{\varphi_s}$ of all time points from $\mTime$ such
+that they are in the $\delta_{\varphi_s}$ state change relation is
+a~$\varphi$-filtered Time of a~seeded system $\mD_s$:
+$$t_0\in\mTime_{\varphi_s}$$
+$$t\in\mTime_{\varphi_s}\Rightarrow\sigma_{\varphi_s}(t)\in\mTime_{\varphi_s}$$
+\end{mydef}
+
+For the sake of completness, a~filtered trace notion is introduced as
+well.
+\begin{mydef}[Filtered Trace]
+Let $\mD$ be a~dynamic system wiht a~seed $s$. Let $\varphi$ be an
+\textsc{ltl} formula and $\mTime_{\varphi_s}$ be a~$\mD_s$ Time filtered
+with regards to $\varphi$. A~filtered trace $\pi_{\varphi_s}$ is a~set of
+values of the system in all points of the filtered time:
+	\begin{equation}
+		\pi_{\varphi_s}=\{\mD_s(t):t\in\mTime_{\varphi_s}\}
+	\end{equation}
+\end{mydef}
 %\begin{mydef}[Filter]
 %
 %\end{mydef}
