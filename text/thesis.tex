@@ -19,6 +19,12 @@
 \newcommand{\mReal}{\mathbb{R}}
 \newcommand{\mNatural}{\mathbb{N}}
 \newcommand{\mTime}{\mathbb{T}}
+\newcommand{\dStateVariables}{$Y'=\{y'_0,y'_1,\dotsc,y'_n\}$}
+\newcommand{\bF}{\mathbf{F}}
+\newcommand{\bG}{\mathbf{G}}
+\newcommand{\bX}{\mathbf{X}}
+\newcommand{\bU}{\mathbf{U}}
+\newcommand{\bR}{\mathbf{R}}
 %
 \newtheorem{mydef}{Definition}
 %
@@ -54,7 +60,10 @@
 \MainMatter
 \tableofcontents
 \chapter{Background}
-\section{Dynamic System}
+In this chapter, various terms and constructions used troughtout the
+thesis are being defined\dots
+\section{Dynamic Systems}
+\subsection{Dynamic System Definition}
 A~dynamic system -- in this context -- abstracts from
 a~set of chemical reactions happening inside an~organizm \cite{sven}.
 In particular, it describes how the \emph{speed} of these chemical
@@ -62,6 +71,7 @@ reactions depends on factors such as \emph{stechiometry} of their
 reactants and other influences taking part in the reactions.
 The time and dynamic equation definitions are taken from
 \cite{pospisil}.
+\subsubsection{Time}
 \begin{mydef}[Time]
 Let $\mTime$ be a~set with a~total linear-order relation ``$<$",
 with the operator $\sigma$; $\forall t \in \mTime{}.\:\exists
@@ -96,12 +106,14 @@ $\mu: \mTime \rightarrow \mReal$
 		\mu{}(t) = \nu{}(\sigma{}(t), t)
 	\end{equation} is called time granularity.
 \end{mydef}
-If a~continuous Time is considered, $\forall{}t\in\mTime.\:\mu{}(t) = 0$.
+If a~continuous Time is considered,
+$\forall{}t\in\mTime.\:\mu{}(t) = 0$.
 A~discrete Time on the other hand may have many values of $\mu$
 depending on how $\sigma$ and $\varrho$ are defined. In some situations,
-even $\forall{}t\in\mTime.\:\mu{}(t) = c, c \in \mReal - \{0\}$ is possible,
-meaning the Time is granular with a~constant step.
+even $\forall{}t\in\mTime.\:\mu{}(t) = c, c \in \mReal - \{0\}$ is
+possible, meaning the Time is granular with a~constant step.
 
+\subsubsection{Dynamic Equation}
 \begin{mydef}[Dynamic Equation]
 Let $y$ be a~state variable and $y'$ be its derivation with regard to
 Time. Furthermore, let $t \in \mTime$ be a~point in the Time.
@@ -144,7 +156,11 @@ of the Time considered and y initialized with the value of the seed $s$:
 		\pi_s = \{y'_s(t) : t \in \mTime\}
 	\end{equation}
 \end{mydef}
+A~term \emph{trajectory} may be used in the text refering to the same.
+Still, some might find trajectory providing a~continuous trace a~better
+name.
 
+\subsubsection{Dynamic Equations System}
 \begin{mydef}[Dynamic Equations System]
 Let $Y'=\{y'_i:1\leq{}i\leq{}n,\:n\in\mNatural\}$ be a~set of dynamic
 equations of state variables $y_i$.
@@ -205,6 +221,186 @@ dynamic system traces may be indexed to refer to a~particular component:
 		$y'_{i,s_i}$.
 \end{inparaenum}
 
+\subsection{Properties of Dynamic Systems}
+One of the interesting properties of a~dynamic system trace
+surely is its shape; as far as the dynamic functions remain continuous,
+the trace represents \emph{a~contimuous trajectory}, too \cite{sven}.
+This property further determines other trace qualities enumerated here
+with a~brief description:
+\begin{inparaenum}[\itshape a\upshape)]
+	\item\emph{reachability} given a~seed, one asks whether a~trace
+		manages to reach \emph{a~specified region} on time;
+	\item\emph{attractor} given a~sample of seeds, the question:
+		``Is there a~point, a~cycle or a~set in the traces phase space
+		that some traces reach and remain in?" may be thought of as an
+		informal description of an attractor \cite{wiki-atractor}; and
+	\item\emph{repellor} in a~dynamic system of a~ball being dropped on
+		a~steep hill from certain hight, the hill top acts as a~repellor
+		as hitting it so that the ball eventually rests on it is
+		unlikelly to happen \cite{wiki-repellor}.
+\end{inparaenum}
+
+A~dynamic system might actually contain multiple instances of both the
+attractors and repellors -- a~multiple hill-tops and valleys landscape
+for the ball to drop in. In case of points, they may be refered to as
+\emph{equilibria}. However, limit-cycles are as well examples of an
+attractor.
+\subsubsection{Initial Conditions Problem}
+A~problem of deciding whether, given a~seed and Time, a~trace has some
+of these properties is called the \emph{initial conditions problem}
+\cite{sven}.
+
+\section{Linear Temporal Logic}
+The Linear Temporal Logic -- \textsc{ltl} -- allows one to specify
+properties of a~dynamic system trace \cite{sven} hence the prototype
+utilizes it for this purpose. Following is a~brief
+\textsc{ltl} specification.
+\subsection{Bounded Semantics}
+\subsubsection{Kripke Structure}
+A~Kripke structure is a~common and satisfying way of modeling a~system,
+especially for the purpose of the model validation\cite{clarke}.
+\begin{mydef}[Kripke Structure]
+Let ${AP}$ be a set of atomic propositions.
+A~Kripke structure\cite{clarke} $M$ over $AP$ is a~tuple
+$M=(S, S_0, R, L)$ where
+\begin{inparaenum}[\upshape a\itshape)]
+	\item{}$S$ is~a finite set of states;
+	\item{}$S_0\subseteq{}S$ is the set of initial states;
+	\item{}$R\subseteq{}S\times{}S$ is a~total transition relation; and
+	\item{}$L:\rightarrow{}2^{AP}$ is a~function that labels each state
+		with a subset of atomic propositions valid in that state.
+\end{inparaenum}
+\end{mydef}
+
+\begin{mydef}[Kripke Structure Path]
+A~path\cite{biere} $\rho_M=s_0,s_1,\dotsc$ starting at a~state
+$s$ in the structure $M$ is an infinite sequence of states
+$s_i, s = s_0$ such that
+$\forall i \in \mNatural_0: (s_i, s_{i+1}) \in R$.
+Furthermore, $\rho_M(i)=s_i$ is the $i$-th state on the path and
+$\rho_M^i=s_i,s_{i+1},\dotsc$ denotes an endless suffix of states
+starting at the position $i$.
+\end{mydef}
+
+\begin{mydef}[LTL Semantics]
+Let $M$ be a~Kripke structure, $\rho_M$ path in $M$ and $\varphi$ be
+an \textsc{ltl} formula. Then a relation $\rho_M\models\varphi$
+($\varphi$ is valid along $\rho_M$) is defined as follows\cite{biere}.
+%\begin{inparaenum}[\upshape a\itshape)]
+\begin{enumerate}
+	\item{$\rho_M\models p$} $\iff p\in L(\rho_M(0))$
+	\item{$\rho_M\models\neg p$} $\iff p\notin L(\rho_M(0))$
+	\item{$\rho_M\models \varphi\wedge\psi$}
+		$\iff\rho_M\models\varphi$ and
+		$\rho_M\models\psi$
+	\item{$\rho_M\models \varphi\vee\psi$}
+		$\iff\rho_M\models\varphi$ or
+		$\rho_M\models\psi$
+	\item{$\rho_M\models\bG\varphi$}
+		$\iff\forall i: \rho_M^i\models\varphi$
+	\item{$\rho_M\models\bF\varphi$}
+		$\iff\exists i: \rho_M^i\models\varphi$
+	\item{$\rho_M\models\bX\varphi$}
+		$\iff\rho_M^1\models\varphi$
+	\item{$\rho_M\models\varphi\bU\psi$} $\iff$
+		$\exists i: \rho_M^i\models\psi \wedge\forall j, j<i: \rho_M^j$
+	\item{$\rho_M\models\varphi\bR\psi$} $\iff$
+$\forall i,\forall j,j<i:\rho_M^j\not\models\varphi\implies\rho_M^i\models\psi$
+\end{enumerate}
+$i,j\in\mNatural_0$.
+%\end{inparaenum}
+\end{mydef}
+
+Given a~limit of a~prefix lenght $\rho$ can be decided to model
+a true or false\dots
+%Boundedness of the semantics means that -- instead of a~common
+%graph-theoretical approach such as automata based verification
+%\cite{clarke} -- 
+
+%Even though the path closely resembles the dynamic system trace both in
+%its definition and symbol, it should be clear from the context to what
+%definition the author refers. Still, the goal is to be able to use
+%a~system trace in places where one would rather expect a~kripke
+%structure path. Moreover, when a dynamic system is being refered, it is
+%useful to define a~way atomic propositions describe system state
+%variables.
+
+\subsection{LTL Modeling}
+To be able to connect atomic propositions with the kripke structure
+definition, following constructions are used. The goal is to be able
+to check whether a~dynamic system trace $\pi$ satisfies a~condition
+expressed as an \textsc{ltl} property.
+
+\subsubsection{Atomic Propositions}
+\begin{mydef}[Atomic Proposition]
+Given a~set of state variables  $Y'=\{y'_0,y'_1,\dotsc,y'_n\}$ of
+a~dynamic system $\mD$, a~domain of the variables $\mReal$ and
+a~set of operators $\chi=\{>,\geq,<,\leq,=\}$, a~tuple
+$a=(y'_i\odot r)\in Y'\times\chi\times\mReal$ is called an atomic
+proposition.
+
+$AP$ denotes a~set of all atomic propositions.
+If indexed, $a_{i,j}\in AP_i$ refers to an atomic proposition related to
+particular state variable.
+\end{mydef}
+
+
+\begin{mydef}[AP Encoding]
+Given a~set $Y'=\{y'_0,y'_1,\dotsc,y'_n\}$ of state variables of
+a~dynamic system $\mD$ and an atomic proposition $a_i\in AP_i$ of
+a~particular state variable $y'_i$, a~function
+$l:AP_i\rightarrow S_i$ is an encoding assigning particular state
+variable atomic propositions $a_{i,j}$ their
+kripke structure state representation $s_{i,j}$ as follows.
+Let $a_{i,j}=(y'_i\odot r), a_{i,j}\in AP_i$. Depending on the
+operator $\odot$ type, appropriate (interval) values are assigned
+to $l(a_{i,j})=s_{i,j}$
+	\begin{enumerate}
+		\item{`$=$'} $\langle r,r\rangle$
+		\item{`$<$'}
+			\begin{enumerate}
+				\item{$(-\infty,r)$} $r$ is the lowest constant
+					amongst $AP_i$
+				\item{$(r',r)$} in case there is $r'<r$ of the same
+					state variable
+				\item{$\langle r,\infty)$} $r$ the biggest constant
+			\end{enumerate}
+		\item{`$>$'}
+			\begin{enumerate}
+				\item{$(-\infty,r\rangle$} r is the lowest constant
+				\item{$(r,r')$} in case there is $r'>r$
+				\item{$(r,\infty)$} in case $r$ is the biggest constant
+			\end{enumerate}
+		\item{`$\leq$'}
+			\begin{enumerate}
+				\item{$(-\infty,r\rangle$} $r$ the lowest constant
+				\item{$(r', r\rangle$} in case there is $r'<r$
+				\item{$(r,\infty)$} in case $r$ is the biggest constant
+			\end{enumerate}
+		\item{`$\geq$'}
+			\begin{enumerate}
+				\item{$(-\infty,r)$} $r$ the lowest constant
+				\item{$\langle r, r')$} if there is $r'>r$
+				\item{$\langle r, \infty)$} if $r$ is the biggest
+						constant
+			\end{enumerate}
+	\end{enumerate}
+\end{mydef}
+Thus a~set of kripke states $S_i$ of a~state variable $y'_i$ might
+contain these items $S_i=\{(-\infty,7\rangle,(7,\infty)\}$ if
+its set of atomic propositions was $AP_i=\{(y'_i \leq 7)\}$.
+
+\begin{mydef}[AP Evaluation]
+Given an atomic proposition $a=(y'_i\odot r)$, a~dynamic system $\mD$
+consisting of \dStateVariables state variables, a~point in Time
+$t\in\mTime$ the system operates in and a~seed, a~function
+$\epsilon_{\mD_s}:\mTime\times AP\rightarrow\{\bot,\top\}$
+asinging either true or false value to $a$ based on common semantics of
+the operator $\odot$ evaluation over the real numbers domain
+is called atomic proposition evaluation function.
+\end{mydef}
+
+
 \chapter{Methodology}
 \section{Framework Description}
 The framework main task is to select traces starting at the seeds of initial conditions
@@ -247,6 +443,8 @@ data in favor of the discrete points.
 Doing so would have the benefit of memory usage relaxation which, as the framework evaluation suggests, would be quite substantial.
 
 \section{Filter}
+% TODO: redefine with both the operators <, > evaluation pair
+% else the construction doesn't work
 As already mentioned, if the focus is put on the sole moment of boundary
 crossing, discrete states are obtained from a~continuous system.
 Following are definitions that describe the filtering.
