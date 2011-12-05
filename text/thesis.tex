@@ -6,6 +6,8 @@
 \usepackage{amsthm}
 \usepackage{graphics}
 \usepackage{paralist}
+\usepackage{program}
+\usepackage[chapter]{algorithm}
 
 %
 \newcommand{\ltl}{\textsc{ltl}~}
@@ -610,7 +612,59 @@ a~specification $\varphi\equiv a_{i,0}=(y_i>c),c\in\mReal$ and a~seed
 $s$ such that the limit cycle ``crosses'' with an hyperplane $y_i=c$,
 the filtered trace $\pi_{\varphi_s}$ contains infinitelly many points
 as the atomic proposition keeps changing its evaluation forever.
+\noindent
+\subsubsection*{Algorithm}
+\begin{algorithm}
+	\caption{Simulation, Cycle Detection, Filter}
+	\label{simulationCycleDetectFilter}
+	\begin{program}
+%		\BEGIN
+			\PROC |Simulation|(\sigma, t_0, s) \BODY
+			\ell := t := t_0;
+			k, l := \keyword{None}, \keyword{None};
+			\WHILE t := \sigma(t)
+			\DO
+				\IF \delta_{\varphi_s}(\ell, t)
+				\THEN \
+				\rcomment{works as $\sigma_{\varphi_s}$}
+					\ell := t;
+					\pi_{\varphi_s} := \pi_{\varphi_s} \concat \mD_s(t);
+					\IF (k,l):=|cycle|(\mD_s,t)
+					\THEN
+						\keyword{break};
+					\FI;
+				\FI;
+			\OD;
+			\keyword{return}\:\pi_{\varphi_s},k,l;
+			\ENDPROC
+%		\END
+	\end{program}
+\end{algorithm}
 
+\begin{algorithm}
+	\caption{Model Checking}
+	\label{modelChecking}
+	\begin{program}
+		\keyword{require}\:\sigma, t_0, s, \varphi;
+		\BEGIN
+			|result| := \top;
+			(\pi_{\varphi_s},k,l):=|Simulation|(\sigma, t_0, s);
+			\IF l \neq \keyword{None}
+			\THEN
+				\FOREACH p\in l_[[\varphi]]_k^0 \rcomment{cyclic}
+				\DO
+					|result| := |result| \wedge p(\pi_{\varphi_s});
+				\OD
+			\ELSE
+				\FOREACH p\in [[\varphi]]_k^0 \rcomment{acyclic}
+				\DO
+					|result| := |result| \wedge p(\pi{\varphi_s});
+				\OD
+			\FI
+			\keyword{return}\:|result|
+		\END
+	\end{program}
+\end{algorithm}
 %\begin{mydef}[Filter]
 %
 %\end{mydef}
