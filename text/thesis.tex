@@ -6,8 +6,6 @@
 \usepackage{amsthm}
 \usepackage{graphics}
 \usepackage{paralist}
-\usepackage{program}
-\usepackage[chapter]{algorithm}
 
 %
 \newcommand{\ltl}{\textsc{ltl}~}
@@ -32,6 +30,7 @@
 \newcommand{\bE}{\mathbf{E}}
 %
 \newtheorem{mydef}{Definition}
+\newtheorem{mylemma}{Lemma}
 %
 \hyphenation{Kri-p-ke}
 \hyphenation{boun-ded}
@@ -66,9 +65,7 @@
 %\end{ThesisKeyWords}
 
 \MainMatter
-
 \tableofcontents
-
 \chapter{Introduction}
 %\section{Framework Description}
 The framework main task is to select traces starting at the seeds of
@@ -94,171 +91,71 @@ of the dynamic system.
 \chapter{Background}
 Considering the model checking and simulation topics, this section
 introduces necessary concepts utilized troughout the text.
-\section{Dynamic Systems}
-\subsection{Dynamic System Definition}
-A~dynamic system -- in this context -- abstracts from
-a~set of chemical reactions happening inside an~organism \cite{sven}.
-In particular, it describes how the \emph{rate} of these chemical
-reactions depends on factors such as \emph{stechiometry} of their
-reactants and other influences taking part in the reactions.
-The time and dynamic equation definitions are taken from
-\cite{pospisil}.
-\subsubsection{Time}
-In order to have a~solid reference for traces of dynamic systems and
-especially for the trace filtering--discretization, the notion of Time
-is defined here.
-\begin{mydef}[Time]
-Let $\mTime\subseteq\mReal^{+}$ be a~set with a~total linear-order
-relation ``$<$", with the operator $\sigma$;
-$\forall t\in\mTime:\exists\sigma(t)\in\mTime$ and the operator
-$\varrho$; $\forall t\in\mTime:\exists\varrho{}(t)\in\mTime$
-	\begin{align}
-		\sigma(t) &= inf\{s\mid t<s\}\\
-		\varrho(t) &= sup\{r\mid r<t\}
-	\end{align}
-and with a~continuous, order-preserving function
-	$\nu: \mTime \times \mTime \rightarrow \mReal$
-with the property:
-	\begin{equation}
-		\nu(t1, t3) = \nu(t_1, t_2) + \nu(t_2, t_3)
-	\end{equation}
-$\mTime$ together with these shall be refered to as the \emph{Time}.
-\end{mydef}
-The function $\nu$ may be thought of as a~distance measurement.
-The operators $\sigma$ and $\varrho$ give the \emph{next} and the
-\emph{previous}
-Time values respectivelly. The definition allows the Time
-to have an ``end" or to comprise of discrete or even
-a~finite number of points.
 
-\begin{mydef}[Time Granularity]
-Let $\mTime$ be the Time and $t \in \mTime$. Then a~function
-$\mu: \mTime \rightarrow \mReal$
-	\begin{equation}
-		\mu{}(t) = \nu{}(\sigma{}(t), t)
-	\end{equation} is called time granularity.
-\end{mydef}
-If a~continuous Time is considered,
-$\forall{}t\in\mTime.\:\mu{}(t) = 0$.
-A~discrete Time on the other hand may have many values of $\mu$
-depending on how $\sigma$ and $\varrho$ are defined. In some situations,
-even $\forall{}t\in\mTime.\:\mu{}(t) = c, c \in \mReal\setminus\{0\}$ is
-possible, meaning the Time is granular with a~constant step.
-
-\subsubsection{Dynamic Equation}
-\begin{mydef}[Dynamic Equation]
-Let $y$ be a~state variable and $y'$ be its derivation with regard to
-Time. Furthermore, let $t \in \mTime$ be a~point in the Time.
-Then the function
-	\begin{equation}
-		y'(t)=f(t, influences)
-	\end{equation}
-denotes a~dynamic equation of the state variable $y$.
-\end{mydef}
-The influences within $f$ may represent mutual interactions of another
-state variables as well as the variable $y$ -- in which case the
-$y'$ contains a feedback loop -- with the state variable $y$.
-Furthermore, the influences may express the effect of constants to
-state variables and internal variables of the dynamic equation. In case
-the influences do not depend on Time, the function is said to be
-\emph{autonomous}.
-For particular examples of the influences with regards to
-chemical reactions see \cite{sven}.
-As far as the codomain value type of the function is considered, a~real
-is usual. Although, in case of a dynamic equations system, the
-type is rather a~tuple of real values.
-
-\begin{mydef}[Seed]
-Let $y$ be a~state variable and $t_0 \in \mTime$ a point in Time.
-A~seed $s$ is the initial value of the variable $y$:
-	\begin{equation}
-		s=y(t_0)
-	\end{equation}
-\end{mydef}
-In the text, $t_0 = 0$ is assumed as relative time measurement usually
-starts in that point. If present, a~subscript $s$ of an equation
-reflects the seed considered: $y'_s$.
-
-\begin{mydef}[Trace]
-Let $y'$ be a~dynamic equation of a~state variable $y$. Furthermore,
-let $s$ be a seed of $y$.
-A~trace $\pi_s$ is a~sequence of values of $y_s'(t)$ in all poitns
-of the Time considered and y initialized with the value of the seed $s$:
-	\begin{equation}
-		\pi_s=\{y'_s(t)\mid t\in\mTime\}
-	\end{equation}
-\end{mydef}
-A~term \emph{trajectory} may be used in the text refering to the same.
-Still, some might find trajectory providing a~continuous trace a~better
-name.
-
-\subsubsection{Dynamic Equations System}
-\begin{mydef}[Dynamic Equations System]
-Let $Y'=\{y'_i\mid 0\leq{}i\leq{}n,\:n\in\mNatural\}$ be a~set of dynamic
-equations of state variables $y_i$.
-Furthermore, let $t\in\mTime$ be a~point in Time.
-A~dynamic system is a~function
-$\mD:Y'\times\mTime\rightarrow\mReal^n$ mapping
-time values to tuples of particular state variable values:
-	\begin{equation}
-		\mD(Y',t)=(y'_{1}(t),y'_{2}(t),\dotsc,y'_{n}(t)).
-	\end{equation}
-\end{mydef}
-In the text, a~short form \emph{dynamic system} may be used to denote
-the same. Moreover, the first component $Y'$ is ommited in
-the rest of the text for brevity. Thus a~system $\mD$
-represents a~particular set of dynamic equations as well.
-
-As far as the context is considered, a~dynamic system refers
-to the change of concentrations of species $y_i$ in a~set of chemical
-reactions with regards to time. These are expressed as the influences
-of particular transition functions.
-
-The dynamic system comprising of dynamic equations, it is natural to
-extend the definition of the trace to fit the system as well.
-
-\begin{mydef}[Dynamic System Seed]
-Let $\mD$ be a~dynamic system comprising of a~set $Y'$ of dynamic
-equations $Y'=\{y'_i\mid 0\leq{}i\leq{}n,n\in\mNatural\}$.
-Furthermore, let $t\in\mTime$ be a~point in Time.
-A~tuple $s=(s_1,s_2,\dotsc,s_n)$ of seeds $s_i$ of particular
-function $y'_i$ is a~dynamic system seed. It is applied to the functions
-as follows:
-	\begin{equation}
-		\mD_s{}(t)=(y'_{1,s_1}(t),y'_{2,s_2}(t),\dotsc{},y'_{n,s_n}(t))
-	\end{equation}
-\end{mydef}
-As well as for its equation counterpart, the seed of a dynamic system
-$\mD$ is denoted as its subscritpt in the text: $\mD_s$.
-
-\begin{mydef}[Dynamic System Trace]
-Let $\mD$ be a~dynamic equation system comprising of dynamic equations
-$Y'=\{y'_i\mid 0\leq{}i\leq{}n,\:n\in\mNatural\}$. Furthermore, let
-$t\in\mTime$ be a~point in Time and $s=(s_1,s_2,\dotsc,s_n)$ be
-its~seed. A~sequence $\pi_s$ of tuples of $y'_{i,s_i}(t)$ values in all
-points of the Time considered is a~system trace:
-	\begin{equation}
-		\pi_s=\{\mD_s{}(t)\mid t\in\mTime\}
-	\end{equation}
-\end{mydef}
-
-Further in the text, dynamic systems, dynamic system seeds as well as
-dynamic system traces may be indexed to refer to a~particular component:
+\section{Trace}
+Here, a~trace $\pi$ represents result of either a~dynamic system
+evolution over a~range of time\cite{sven}\cite{pospisil} approximated by
+a~numeric method or a~result of any other kind of experiment providing
+these conditions are met:
 \begin{inparaenum}[\itshape a\upshape{})]
-	\item $\mD_i$ refers to the function $y'_i$ of the system;
-	\item $s_i$ refers to the i-th seed value within the seed tupple
-		$s$;
-	\item $\mD_{s,i}$ refers to the ``seeded" function $y'_{i,s_i}$; and
-	\item $\pi_{s,i}$ refers to a trace of a~seeded function
-		$y'_{i,s_i}$.
+	\item trace points are vectors of state variable values from
+		$\mReal$;
+	\item in each point, a~temporal value from $\mReal^+$is present
+		as the first field; and
+	\item points can be ordered by their temporal value in a~strictly
+		monotonic fashion.
 \end{inparaenum}
+\begin{mydef}[Trace]
+Let $n\in\mNatural^+$ be the number of state variables of a~system.
+A~sequence $\pi=p_0,p_1,\dotsc$ of tuples $p\in\mReal^+\times\mReal^n$
+is caled a~trace. A~single element $p_i=\pi(i)$ of a~trace $\pi$ is
+called a~point.
+%The first point in a~trace $s_0=\pi(0)$ is called
+%a~seed and a~trace starting with a~seed $s_0$ may be denoted as
+%$\pi_{s_0}$.
+A suffix of points $p_i,p_{i+1},\dotsc$ of a~trace is
+denoted as $\pi^i$. The first field of the~point vector is called
+a~time stamp.
+A~fact that $p_i$ predeceases $p_{i+1}$ in a~trace is denoted as
+$p_i\rightarrow p_{i+1}$. Trace points can be ordered in a~strictly
+monotonic fashion based on their times tamps:
+$p_i\rightarrow p_j\overset{def}{\iff} p_i(0)<p_j(0);i,j\in\mNatural_0$.
+\end{mydef}
 
-\subsection{Properties of Dynamic Systems}
-One of interesting properties of a~dynamic system trace
-surely is its shape; as far as dynamic functions remain continuous,
-the trace represents \emph{a~contimuous trajectory}, too \cite{sven}.
-This property determines other trace qualities enumerated here
-with a~brief description \cite{sven}\cite{rizk}.
+To be able to access the temporal field of a~trace point,
+a~time projection function $\tau$ is defined.
+\begin{mydef}[Time Projection]
+Let $\pi$ be a~trace and $n\in\mNatural^+$ the number of state
+variables trace $\pi$ involves. A~function
+$\tau:\mReal^+\times\mReal^n\rightarrow\mReal^+$ is called a~time
+projection and, given a~point $p\in\pi$, it provides the time stamp
+$\tau(p)$ of that point.
+
+Naturally, the definition can be extended to a trace as well;
+$\hat{\tau}(\pi)=\tau(p_0),\tau(p_1),\dotsc;p_i\in\pi$
+is then a~strictly monotonic sequence of relevant time stamps.
+\end{mydef}
+
+As far as dynamic systems are concerned, their evolution approximation
+obtained as a~result of a~numerical method is always \emph{discrete and
+finite}. The same holds for sampled real-life system experiments.
+
+In case an infinitely long discrete trace comprises only a~finite number
+of distinct points, it contains a~cycle. Such a~situation might be
+denoted as follows\cite{biere}.
+\begin{mydef}[K-Loop]
+For $l\leq k;l,k\in\mNatural_0$ a~trace $\pi$ is called a~$(k,l)$-loop
+if $\pi(k)\rightarrow\pi(l)$ and
+$\pi=p_0,\dotsc,\overline{p_{l},\dotsc,p_{k},}$
+A~$(k,l)$-loop may be called simply a~$k$-loop as well. 
+\end{mydef}
+A~loop is a~natural property of many real-life systems and represents
+either an equlibrium $l=k$ or a~limit
+cycle $l<k$\cite{sven}.
+
+\section{Trace Properties}
+Here, few trace qualities are enumerated including a~brief
+description \cite{sven}\cite{rizk}:
 \begin{inparaenum}[\itshape a\upshape)]
 	\item\emph{reachability} given a~seed, one asks whether a~trace
 		manages to reach \emph{a~specified region};
@@ -277,23 +174,13 @@ with a~brief description \cite{sven}\cite{rizk}.
 		validity of a~specification $\psi$.
 \end{inparaenum}
 
-A~dynamic system might actually contain multiple instances of both the
-attractors and repellors -- a~multiple hill-tops and valleys landscape
-for the ball to drop on. In case of points, they may be refered to as
-\emph{equilibria}. However, limit-cycles are as well examples of an
-attractor.
-\subsubsection{Initial Conditions Problem}
-A~problem of deciding whether, given a~seed and Time, a~trace has some
-of these properties is called the \emph{initial conditions problem}
-\cite{sven}.
+What all these trace properties have in common is they can be expressed
+as an \ltl formula with real-based constraints as atomic
+propositions\cite{sven}. Moreover, a~trace can be verified against
+an \ltl formula. Therefore, the \ltl semantics is introduced.
 
-\section{Linear Temporal Logic}
-The Linear Temporal Logic -- \textsc{ltl} -- allows one to specify
-properties of a~dynamic system trace \cite{sven} hence the prototype
-utilizes it for this purpose. Following is a~brief \textsc{ltl}
-semantics specification.
 \subsection{LTL Semantics}
-\subsubsection{Kripke Structure}
+\subsubsection*{Kripke Structure}
 A~Kripke structure is a~common and satisfying way of modeling a~system,
 especially for the purpose of the model validation\cite{clarke}.
 \begin{mydef}[Kripke Structure]
@@ -308,6 +195,9 @@ $M=(S, S_0, R, L)$ where
 		with a subset of atomic propositions valid in that state.
 \end{inparaenum}
 \end{mydef}
+In the text, real-constraint atomic propositions are considered.
+An example of such a~constraint could be
+$a\equiv x_i \geq c;c\in\mReal$.
 
 \begin{mydef}[Kripke Structure Path]
 A~path\cite{biere} $\rho_M=s_0,s_1,\dotsc$ starting at a~state
@@ -378,14 +268,8 @@ introduced.
 The idea of finding a~counterexample lies in unrolling temporal
 operators in a~formula $\varphi$ to get a~formula $\phi$ comprising
 of first order logic operators and original atomic propositions
-``attached'' to a~particular position in $\rho_M$. 
-Following definitions are due to\cite{biere}.
-\begin{mydef}[K-Loop]
-For $l\leq k;l,k\in\mNatural_0$ a~path $\rho_M$ is called a~$(k,l)$-loop
-if $\rho_M(k)\rightarrow\rho_M(l)$ and $\rho_M=u\cdot v^\omega$ with
-$u=(\rho_M(0),\dotsc,\rho_M(l-1))$ and $v=(\rho_M(l),\dotsc,\rho_M(k))$.
-A~$(k,l)$-loop may be called simply a~$k$-loop as well. 
-\end{mydef}
+``attached'' to a~particular position in $\rho_M$.
+
 In bounded model checking, one uses only first $k+1$ elements of
 a~path $\rho_M$ to determine the validity of the formula along the
 path\cite{biere}.
@@ -406,7 +290,7 @@ sake of brevity. Both the acyclic and loop definitions are due to
 Biere et al\cite{biere}.
 
 \begin{mydef}[LTL Formula Translation without a Loop]
-For an LTL formula $\varphi$ and $k,i\in\mNatural$, with $i\leq k$ and
+For an LTL formula $\varphi$ and $i,j,k\in\mNatural$, with $i\leq k$ and
 $p\in {AP}_\varphi$, ${AP}_\varphi$ being the set of atomic propositions
 of $\varphi$
 \begin{align}
@@ -416,6 +300,7 @@ of $\varphi$
 		[[\varphi]]_k^i\wedge[[\psi]]_k^i\\
 	[[\varphi\vee\psi]]_k^i&\rightarrow
 		[[\varphi]]_k^i\vee[[\psi]]_k^i\\
+	[[\bX\varphi]]_k^i&\rightarrow[[\varphi]]_k^{i+1}\\
 	[[\bG\varphi]]_k^i&\rightarrow\bot\\
 	[[\bF\varphi]]_k^i&\rightarrow\bigvee_{j=i}^k[[\varphi]]_k^j\\
 	[[\varphi\bU\psi]]_k^i&\rightarrow\bigvee_{j=i}^k\left(
@@ -427,251 +312,44 @@ of $\varphi$
 \end{align} 
 \end{mydef}
 However, the definition being recursive, it is very unefficient to
-apply the $[[\cdot]]_k^i$ operator every time as the procedure would make 
-exponentially many operations with regard to $k$ in that case.
+apply the $[[\cdot]]_k^i$ operator every time as the procedure would
+make exponentially many operations with regard to $k$ in that case.
 Instead, one has to utilize sub-formula sharing to improve the
-performance to a~polynomial time\cite{biere}. 
+performance to a~polynomial time\cite{biere}.
 
-\chapter{Methodology}
-\subsubsection*{LTL Semantics and Continuous Systems}
-Even though the approximation is discrete at the finest grain,
-such a~detail isn't reasonable for the model checking part of the
-framework. Especially, the $\bX$ -- next -- operator semantics
-doesn't make sense over the (aproximated) continuous domain.
-If one selects $p_0 = \pi_s(t_0),t_0\in\mTime$ and
-$p_1 = \pi_s(t_0+c),c\in\mReal\setminus 0$, many system points can still
-be inserted inbetween the points $p_0$ and $p_1$ rendering common $\bX$
-definition invalid. To make the situation even worse, this often happens
-when the precision of the integration changes \cite{integration}.
-As a~consequence, even on a~single trace, an~\ltl formula validity
-checking might gave both the positive and the negative result based just
-on the precision the sysetem was integrated with. 
-%(Thus a discrete and deterministic trace points assignment mechanism
-%is required.)
-
-\subsubsection*{Filtering Description}
-However, considering the \em constants \rm present within the formula as
-parts of the real \em constraints \rm put on the trajectory to be
-fulfiled, a~partitioning of the trace naturarlly emerges. Adding time
-to the consideration, one is able to observe particular
-constants--boundaries being crossed by the system as it evolves.
-\em Focusing just on the moment of the boundary-crossing, one
-gains a~series of discrete events the system exhibits\rm{}.
-
-Such an~observation resembles what one might call \em a~filter \rm
-and indeed a~filtering sub-component of the framework can be identified
-this way. Moreover, as the same constants would be used for
-an~\ltl b\"{u}chi automaton representation of the formula, crossing any
-of them would make the representation change its internal state as well.
-Thus, considering the state change -- $\bX$ semantics, the construction
-seems valid from the model checking point of view.
-
-\section{Dynamic System as a~Kripke Structure}
-Here, the~connection between a~dynamic system property
-and a~kripke structure is introduced. The goal is to be able to check
-whether a~dynamic system trace $\pi_s$ satisfies a~condition expressed
-as an \textsc{ltl} formula.
-
-\subsection{Atomic Propositions}
-\begin{mydef}[Atomic Proposition]
-Given a~set of dynamic equations over state variables
-$Y=\{y_0,y_1,\dotsc,y_n\}$ of a~system $\mD$, a~constant $r\in\mReal$
-and a~set of operators $\chi=\{>,\geq,<,\leq,=\}$, a~tuple
-$a=(y_i,\odot,r)\in Y\times\chi\times\mReal$ is called an atomic
-proposition over the system $\mD$.
-
-$AP$ denotes a~set of all atomic propositions of the system.
-If indexed,
-$a_{i,j}\in AP_i=\{a_{i,0},a_{i,1},\dotsc,a_{i,m}\},m\in\mNatural$
-refers to an atomic proposition related to particular state variable
-$y_i$.
-\end{mydef}
-In the text, the notation $a_{i,j}=y_i\odot r$ might be used to point
-to the same.
-
-\begin{mydef}[AP Evaluation Function]
-Given a~set of states $S\subseteq\pi_{s}$ of the dynamic system
-$\mD_s$ seeded in $s$, a~function
-$\epsilon:AP\times S\rightarrow\{\top,\bot\}$ asinging either true
-or false value to the proposition $a_{i,j}$, based on common semantics
-of the operator $\odot$ evaluation over the system state variables,
-is called atomic proposition evaluation function.
-\end{mydef}
-
-In the text, an \ltl formula comprising of atomic propositions combined
-with some first order logic operators $\vee,\wedge,\neg$ and \ltl
-operators $\bX,\bF,\bG,\bU,\bR$ is ment whenever refered to.
-
-\subsection{Filter Specification}
-As already mentioned, if the focus is put on the sole moment of boundary
-crossing, discrete states are obtained from a~continuous system.
-Following are definitions that describe the filtering.
-\begin{mydef}[State Change]
-Given a~dynamic system $\mD$, its seed $s$ and an \ltl formula
-$\varphi$. Furthermore, let $t_0,t\in\mTime;t_0<t$ be two points
-in time. A~state change relation
-$\delta\subseteq\mTime\times\mTime$ with regards to $\mD_s$
-and $\varphi$ is a set:
-	\begin{equation}
-		\delta_{\varphi_s} = \{(t_0,t)\mid\exists i,j
-			\in\mNatural_0,a_{i,j}\in
-			AP_\varphi:\epsilon(a_{i,j},D_{s}(t_0))
-			\neq\epsilon(a_{i,j},D_{s}(t))\}
-	\end{equation}
-\end{mydef}
-To denote a~system changed its state with regards to $\varphi$, the
-notation $(t_0,t)\in\delta_{\varphi_s}$ can be used.
-In fact, the $<$ relation may be used in $\delta$ definition as well --
-the purpose is only to obtain a~true--false value.
-
-\begin{mydef}[Filtered Time Operators]
-Let $\mTime$ be the Time and $t\in\mTime$ a~point in Time.
-Let $\mD$ be a~dynamic system with its seed $s$.
-Furthermore, let $\varphi$ be an \textsc{ltl} formula and
-$\delta_{\varphi_s}$ a~state change relation with regards to $\mD_s$.
-A~filtered operator $\sigma_{\varphi_s}:\mTime\rightarrow\mTime$
-is defined and a~filtered operator
-$\varrho_{\varphi_s}:\mTime\rightarrow\mTime$ is defined
-	\begin{align}
-		\sigma_{\varphi_s}(t)&=inf\{u\mid(t,u)\in\delta_{\varphi_s}\}\\
-		\varrho_{\varphi_s}(t)&=sup\{u\mid(u,t)\in\delta_{\varphi_s}\}
-	\end{align}
-\end{mydef}
-
-\begin{mydef}[Filtered Time]
-Let $\mD$ be a~dynamic system with a~seed $s$. Let $t_0\in\mTime$
-be a~point in Time. Furthermore, let $\varphi$ be an \textsc{ltl}
-formula. A~set $\mTime_{\varphi_s}\subset\mReal^+$ containing points
-$t$ such that their ``next'' points fulfil
-$\sigma_{\varphi_s}(t)\in\mTime_{\varphi_s}$ is a~filtered Time.
+\chapter{Metodology}
+The key feature is the equivalence of trace points based on atomic
+propositions validity. For that purpose, the relation $\sim$ is defined.
+It legitimates the filtering of a~trace. Interestingly,
+a~filtered trace resembles very closely what was previously defined as
+a kripke structure path. Therefore $\sim$ allows \ltl model checking
+to be applied to traces. Moreover, it even justifies the $\bX$ operator
+semantics over a~continuous domain.
+\begin{mydef}[Point Equivalence]
+Points $p,q\in\pi$ are equivalent in $\sim$ if and only if following
+condition holds.
 \begin{align}
-	t_0&\in\mTime_{\varphi_s}\\
-	t\in\mTime_{\varphi_s}\Rightarrow\sigma_{\varphi_s}(t)
-		&\in\mTime_{\varphi_s}
+	p\sim q	&\overset{def}{\iff}\forall a\in AP:
+		\bigwedge_{r\in\Omega(p,q)}a(q)\iff a(r)\\
+\Omega(p,q)&=\{r\mid\tau(r)\in\langle\tau(p),\tau(q)\rangle\}\cup
+	\{r\mid\tau(r)\in\langle\tau(q),\tau(p)\rangle\}
+%\end{equation}
 \end{align}
 \end{mydef}
-As can be seen in figure \ref{sigmaVarphiTimeVarphi}, even for
-continuous Time the filtered Time comprises of discrete points.
-
-\begin{figure}
-	\begin{picture}(150,100)
-		% axes
-		%\linethickness{0.1mm}
-		\put(10,5){\vector(0,1){90}}
-		\put(5,95){\shortstack[l]{$t$}}
-		\put(5,10){\vector(1,0){137}}
-		\put(145,5){\shortstack[l]{$t$}}
-		\put(0,0){\shortstack{$t_0$}}
-		\put(7,30){\line(1,0){4}}
-		\put(0,25){\shortstack{$t_1$}}
-		\put(7,50){\line(1,0){4}}
-		\put(0,45){\shortstack{$t_2$}}
-		\put(7,70){\line(1,0){4}}
-		\put(0,65){\shortstack{$t_3$}}
-		\put(40,7){\line(0,1){4}}
-		\put(35,0){\shortstack{$t_1$}}
-		\put(65,7){\line(0,1){4}}
-		\put(60,0){\shortstack{$t_2$}}
-		\put(90,7){\line(0,1){4}}
-		\put(85,0){\shortstack{$t_3$}}
-		% values
-		\put(10,10){\circle*{2}}
-		\multiput(10,30)(25,20){3}{
-			\thicklines
-			\circle*{2}
-			\line(1,0){25}
-			\thinlines
-			\qbezier(-1,-2)(1,0)(-1,2)
-		}
-		\put(120,80){
-			\shortstack[r]{$\sigma_{\varphi_s}$\\$\mTime_{\varphi_s}$}
-			\thicklines
-			\put(5,17){\line(1,0){5}}
-			\put(5,3){\circle*{2}}
-		}
-	\end{picture}
-\label{sigmaVarphiTimeVarphi}
-\caption{$\sigma_{\varphi_s},\mTime_{\varphi_s}$}
-\end{figure}
-
-For the sake of completness, a~filtered trace notion is introduced as
-well.
-\begin{mydef}[Filtered Trace]
-Let $\mD$ be a~dynamic system wiht a~seed $s$. Let $\varphi$ be an
-\textsc{ltl} formula and $\mTime_{\varphi_s}$ be a~$\mD_s$ Time filtered
-with regards to $\varphi$. A~filtered trace $\pi_{\varphi_s}$ is a~set
-of values of the system in all points of the filtered time:
-	\begin{equation}
-		\pi_{\varphi_s}=\{\mD_s(t)\mid t\in\mTime_{\varphi_s}\}
-	\end{equation}
-\end{mydef}
-
-Even a~filtered trace might still represent an endless object. Suppose
-the dynamic system phase space contains a limit cycle. Given
-a~specification $\varphi\equiv a_{i,0}=(y_i>c),c\in\mReal$ and a~seed
-$s$ such that the limit cycle ``crosses'' with an hyperplane $y_i=c$,
-the filtered trace $\pi_{\varphi_s}$ contains infinitelly many points
-as the atomic proposition keeps changing its evaluation forever.
-\noindent
-\subsubsection*{Algorithm}
-\begin{algorithm}
-	\caption{Simulation, Cycle Detection, Filter}
-	\label{simulationCycleDetectFilter}
-	\begin{program}
-%		\BEGIN
-			\PROC |Simulation|(\sigma, t_0, s) \BODY
-			\ell := t := t_0;
-			k, l := \keyword{None}, \keyword{None};
-			\WHILE t := \sigma(t)
-			\DO
-				\IF \delta_{\varphi_s}(\ell, t)
-				\THEN \
-				\rcomment{works as $\sigma_{\varphi_s}$}
-					\ell := t;
-					\pi_{\varphi_s} := \pi_{\varphi_s} \concat \mD_s(t);
-					\IF (k,l):=|cycle|(\mD_s,t)
-					\THEN
-						\keyword{break};
-					\FI;
-				\FI;
-			\OD;
-			\keyword{return}\:\pi_{\varphi_s},k,l;
-			\ENDPROC
-%		\END
-	\end{program}
-\end{algorithm}
-
-\begin{algorithm}
-	\caption{Model Checking}
-	\label{modelChecking}
-	\begin{program}
-		\keyword{require}\:\sigma, t_0, s, \varphi;
-		\BEGIN
-			|result| := \top;
-			(\pi_{\varphi_s},k,l):=|Simulation|(\sigma, t_0, s);
-			\IF l \neq \keyword{None}
-			\THEN
-				\FOREACH p\in l_[[\varphi]]_k^0 \rcomment{cyclic}
-				\DO
-					|result| := |result| \wedge p(\pi_{\varphi_s});
-				\OD
-			\ELSE
-				\FOREACH p\in [[\varphi]]_k^0 \rcomment{acyclic}
-				\DO
-					|result| := |result| \wedge p(\pi{\varphi_s});
-				\OD
-			\FI
-			\keyword{return}\:|result|
-		\END
-	\end{program}
-\end{algorithm}
-%\begin{mydef}[Filter]
-%
-%\end{mydef}
-% list of figures
-% list of tables
-\bibliographystyle{plain}
-%\bibliography{thesis.bib}
-%
-
-\end{document}  
+In words, two points $p,q\in\pi$ are in relation $p\sim q$ if they
+have got the same evaluation in all the atomic propositions and all the
+points laying ``between'' them -- from the temporal point of view --
+have got the same evaluation, too.
+\begin{mylemma}
+Point equivalence $\sim$ is a~proper equivalence.
+\begin{proof}Given a~trace $\pi$ and points $p,q,r\in\pi$, following
+properties of $\sim$ are fulfiled rendering it a~proper equivalence.
+	\begin{inparaenum}
+		\item{Reflexivity.} As $\Omega(r,r)=\{r\}$, reflexivity holds.
+		\item{Symmetry.} Bullox\dots
+		\item{Transitivity.} Froobnicate the barochonder.
+	\end{inparaenum}
+	\qedhere
+\end{proof}
+\end{mylemma}
+\end{document}
