@@ -6,6 +6,7 @@
 \usepackage{amsthm}
 \usepackage{graphics}
 \usepackage{paralist}
+\usepackage{color}
 
 %
 \newcommand{\ltl}{\textsc{ltl}~}
@@ -44,7 +45,7 @@
 \thesislang{en}
 \thesisadvisor{David \v{S}afr\'{a}nek}
 %
-
+\input{transfig}
 \begin{document}
 
 \FrontMatter
@@ -95,46 +96,50 @@ introduces necessary concepts utilized troughout the text.
 \section{Trace}
 Here, a~trace $\pi$ represents result of either a~dynamic system
 evolution over a~range of time\cite{sven}\cite{pospisil} approximated by
-a~numeric method or a~result of any other kind of experiment providing
-these conditions are met:
-\begin{inparaenum}[\itshape a\upshape{})]
-	\item trace points are vectors of state variable values from
-		$\mReal$;
-	\item in each point, a~temporal value from $\mReal^+$is present
-		as the first field; and
-	\item points can be ordered by their temporal value in a~strictly
-		monotonic fashion.
-\end{inparaenum}
+a~numeric method or a~result of any other kind of experiment.
+%providing
+%these conditions are met:
+%\begin{inparaenum}[\itshape a\upshape{})]
+%	\item trace points are vectors of state variable values from
+%		$\mReal$;
+%	\item in each point, a~temporal value from $\mReal^+$is present
+%		as the first field; and
+%	\item points can be ordered by their temporal value in a~strictly
+%		monotonic fashion.
+%\end{inparaenum}
 \begin{mydef}[Trace]
 Let $n\in\mNatural^+$ be the number of state variables of a~system.
-A~sequence $\pi=p_0,p_1,\dotsc$ of tuples $p\in\mReal^+\times\mReal^n$
+A~sequence $\pi=p_0,p_1,\dotsc$ of tuples %$p\in\mReal^+\times$
+$\mReal^n$
 is caled a~trace. A~single element $p_i=\pi(i)$ of a~trace $\pi$ is
 called a~point.
 %The first point in a~trace $s_0=\pi(0)$ is called
 %a~seed and a~trace starting with a~seed $s_0$ may be denoted as
 %$\pi_{s_0}$.
 A suffix of points $p_i,p_{i+1},\dotsc$ of a~trace is
-denoted as $\pi^i$. The first field of the~point vector is called
-a~time stamp.
+denoted as $\pi^i$.
+%The first field of the~point vector is called
+%a~time stamp.
 A~fact that $p_i$ predeceases $p_{i+1}$ in a~trace is denoted as
-$p_i\rightarrow p_{i+1}$. Trace points can be ordered in a~strictly
-monotonic fashion based on their times tamps:
-$p_i\rightarrow p_j\overset{def}{\iff} p_i(0)<p_j(0);i,j\in\mNatural_0$.
+$p_i\rightarrow p_{i+1}$.
+%Trace points can be ordered in a~strictly
+%monotonic fashion based on their times tamps:
+%$p_i\rightarrow p_j\overset{def}{\iff} p_i(0)<p_j(0);i,j\in\mNatural_0$.
 \end{mydef}
 
-To be able to access the temporal field of a~trace point,
-a~time projection function $\tau$ is defined.
-\begin{mydef}[Time Projection]
-Let $\pi$ be a~trace and $n\in\mNatural^+$ the number of state
-variables trace $\pi$ involves. A~function
-$\tau:\mReal^+\times\mReal^n\rightarrow\mReal^+$ is called a~time
-projection and, given a~point $p\in\pi$, it provides the time stamp
-$\tau(p)$ of that point.
+%To be able to access the temporal field of a~trace point,
+%a~time projection function $\tau$ is defined.
+%\begin{mydef}[Time Projection]
+%Let $\pi$ be a~trace and $n\in\mNatural^+$ the number of state
+%variables trace $\pi$ involves. A~function
+%$\tau:\mReal^+\times\mReal^n\rightarrow\mReal^+$ is called a~time
+%projection and, given a~point $p\in\pi$, it provides the time stamp
+%$\tau(p)$ of that point.
 
-Naturally, the definition can be extended to a trace as well;
-$\hat{\tau}(\pi)=\tau(p_0),\tau(p_1),\dotsc;p_i\in\pi$
-is then a~strictly monotonic sequence of relevant time stamps.
-\end{mydef}
+%Naturally, the definition can be extended to a trace as well;
+%$\hat{\tau}(\pi)=\tau(p_0),\tau(p_1),\dotsc;p_i\in\pi$
+%is then a~strictly monotonic sequence of relevant time stamps.
+%\end{mydef}
 
 As far as dynamic systems are concerned, their evolution approximation
 obtained as a~result of a~numerical method is always \emph{discrete and
@@ -318,38 +323,116 @@ Instead, one has to utilize sub-formula sharing to improve the
 performance to a~polynomial time\cite{biere}.
 
 \chapter{Metodology}
+\section{Filter}
 The key feature is the equivalence of trace points based on atomic
 propositions validity. For that purpose, the relation $\sim$ is defined.
 It legitimates the filtering of a~trace. Interestingly,
 a~filtered trace resembles very closely what was previously defined as
 a kripke structure path. Therefore $\sim$ allows \ltl model checking
-to be applied to traces. Moreover, it even justifies the $\bX$ operator
-semantics over a~continuous domain.
+to be applied to traces as it removes the stuttering from
+them\cite{lamport}.
 \begin{mydef}[Point Equivalence]
-Points $p,q\in\pi$ are equivalent in $\sim$ if and only if following
+Points $p_i,p_j\in\pi$ are equivalent in $\sim$ if and only if following
 condition holds.
 \begin{align}
-	p\sim q	&\overset{def}{\iff}\forall a\in AP:
-		\bigwedge_{r\in\Omega(p,q)}a(q)\iff a(r)\\
-\Omega(p,q)&=\{r\mid\tau(r)\in\langle\tau(p),\tau(q)\rangle\}\cup
-	\{r\mid\tau(r)\in\langle\tau(q),\tau(p)\rangle\}
+	p_i\sim p_j	\overset{def}{\iff}&\forall a\in AP:
+		\bigwedge_{q\in\Omega(p_i,p_j)}a(p_i)\iff a(q)\\
+\Omega(p_i,p_j)=&\{q\mid p_i\rightarrow\dotsm\rightarrow q
+		\rightarrow\dotsm\rightarrow p_j\}\cup\nonumber\\
+		&\{q\mid p_j\rightarrow\dotsm\rightarrow q\rightarrow\dotsm
+		\rightarrow p_i\}\cup\nonumber\\
+		&\{p_i,p_j\}
 %\end{equation}
 \end{align}
 \end{mydef}
-In words, two points $p,q\in\pi$ are in relation $p\sim q$ if they
-have got the same evaluation in all the atomic propositions and all the
-points laying ``between'' them -- from the temporal point of view --
-have got the same evaluation, too.
+In words, two points $p_i,p_j\in\pi$ are in relation $p_i\sim p_j$ if
+they have got the same evaluation in all the atomic propositions while
+so do all the points laying ``between'' $p_i$ and $p_j$.
 \begin{mylemma}
 Point equivalence $\sim$ is a~proper equivalence.
-\begin{proof}Given a~trace $\pi$ and points $p,q,r\in\pi$, following
-properties of $\sim$ are fulfiled rendering it a~proper equivalence.
+\begin{proof}Given a~trace $\pi$ and points $p_i,p_j,p_k\in\pi$,
+following properties of $\sim$ are fulfiled rendering it a~proper
+equivalence.
 	\begin{inparaenum}
-		\item{Reflexivity.} As $\Omega(r,r)=\{r\}$, reflexivity holds.
-		\item{Symmetry.} Bullox\dots
-		\item{Transitivity.} Froobnicate the barochonder.
+		\item{Reflexivity.} As $\Omega(p_i,p_i)=\{p_i\}$,
+			reflexivity holds.
+		\item{Symmetry.} Without lost of generality, let $p_i\sim p_j$
+			but $p_j\not\sim p_i$. From $p_j\not\sim p_i$,
+			$\exists a\in AP,q\in\Omega(p_j, p_i):\neg(a(p_j)
+			\iff a(q))$. However, $\Omega(p_j, p_i)=\Omega(p_i,p_j)$
+			and from the definition of $\sim$ and the fact that
+			$p_i\sim p_j$,
+			$\forall a\in AP:\bigwedge_{q\in\Omega(p_j,p_i)}a(p_j)\iff
+			a(q)$, what is a~contradiction. Therefore, symmetry holds.
+		\item{Transitivity.} Let $i\leq j\leq k$ and $p_i\sim p_j$,
+			$p_j\sim p_k$ but $p_i\not\sim p_k$. By $p_i\not\sim p_k$,
+			$\exists a\in AP, q\in\Omega(p_i, p_k):
+			\neg(a(p_i)\iff a(q))$. By
+			$\Omega(p_i,p_j)\cup\Omega(p_j,p_k)=\Omega(p_i,p_k)$ and by
+			$p_i\sim p_j\wedge p_j\sim p_k$,
+			$\forall a\in AP:\bigwedge_{q\in\Omega(p_i,p_k)}a(q)
+			\iff a(p_k)$, what is a~contradiction. For other cases of
+			$i,j,k$ ordering -- by means of $\sim$~symmetry --
+			transitivity holds, too.
 	\end{inparaenum}
 	\qedhere
 \end{proof}
 \end{mylemma}
+As a~consequence, $\sim$~partitions a~trace $\pi$ into
+(infinitelly many) classes of points having the same evaluation in all
+atomic propositions while remaining a~continuous sequence. Selecting
+only the representants of particular classes, one is able to forget
+other class points for the purpose of propositions validity checking
+as they don't change it. It is useful especially for processing
+finite sequences produced by numeric methods as plenty of resources can
+be saved this way. Therefore, the implementation verifies only the
+representants. These are selected as the first -- by means of
+the $\rightarrow$ relation -- elements $q$ such that
+$p\rightarrow q\wedge[p]\neq[q]$.
+
+\section{Cycle Detection}
+Recalling the $k$-loop definition and refering to the bounded model
+checking, it is possible to argue about properties containing the $\bG$
+operator even on finite-element traces\cite{biere}. For that purpose,
+the prototype comprises two cycle detector implementations and compares
+key aspects of both of them. Before that, here is some background about
+the trace looping.
+
+Even though it would be possible -- and more accurate -- to check
+a~trace for loop presence directly on evaluated states, it wouldn't
+work on spiral paths. As an example situation, condsider a 2D spiral
+trace which has a point equilibirium in $x',y'$ and an \ltl property
+$\bF((x\ge x'-\epsilon_x)\wedge(x\le x'+\epsilon_x))\wedge
+\bF((y\ge y'-\epsilon_y)\wedge(y\le y'+\epsilon_y))$ checking this
+equilibrium with some explicit inaccuracy $\epsilon_x,\epsilon_y$.
+As the evaluation vector repeats in this case three times till
+it reaches the equlibrium, the first repetition is labeled as a~cycle.
+The cycle effectivelly blocking the rest of the trace to be inspected
+renders the obviously true property invalid. See the
+figure \ref{spiral}.
+\begin{figure}
+\input{spiral}
+\caption{Spiral Equilibrium Property}
+\label{spiral}
+\end{figure}
+Therefore, cycles are being detected on the trace values directly.
+However, even this approach has got its drawbacks. One of them
+is the comparision inacurracy, other the fact that a~dense spiral might
+be considered a cycle even though it wasn't. Moreover, even filtered
+(dense) spiral traces might comprise a~huge amount of point classes
+making the bounded model checking approach impracticable.
+
+On the other hand, if the filtered trace contains a~real limit cycle,
+the sequence of evaluated states creates a~lasso-shape making the
+bounded model checking approach run in $O(|AP|^2)$ of steps
+instead of $O(2^{|AP|})$\cite{biere}. For that purpose, the bound is
+determined as the loop property or the filtered trace lengt in case
+no limit loop is present.
+
+A~self-loop in a~trace requires special handling as well. In case of
+a~trace with a~point equilibrium, the cycle detector has to cooperate
+with the numeric method such that the lost of precision related to
+approaching the equlibrium is reported as a~self-loop. Othervise,
+detecting a~self-loop on filtered trace is impossible because the
+approaching doesn't trigger a~change in atomic proposition evaluation. 
 \end{document}
