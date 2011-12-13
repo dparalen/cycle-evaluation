@@ -35,6 +35,7 @@
 %
 \hyphenation{Kri-p-ke}
 \hyphenation{boun-ded}
+%\hyphenation{pro-po-si-t-ion}
 %
 \thesistitle{Simulation Analysis of Large-scale Dynamic Systems}
 \thesissubtitle{Bachelors Thesis}
@@ -97,92 +98,62 @@ introduces necessary concepts utilized troughout the text.
 Here, a~trace $\pi$ represents result of either a~dynamic system
 evolution over a~range of time\cite{sven}\cite{pospisil} approximated by
 a~numeric method or a~result of any other kind of experiment.
-%providing
-%these conditions are met:
-%\begin{inparaenum}[\itshape a\upshape{})]
-%	\item trace points are vectors of state variable values from
-%		$\mReal$;
-%	\item in each point, a~temporal value from $\mReal^+$is present
-%		as the first field; and
-%	\item points can be ordered by their temporal value in a~strictly
-%		monotonic fashion.
-%\end{inparaenum}
+Both sources describing values of concentrations of $n$ state variables,
+the domain considered is~$\mReal_{+}^n$.
+
 \begin{mydef}[Trace]
-Let $n\in\mNatural^+$ be the number of state variables of a~system.
-A~sequence $\pi=p_0,p_1,\dotsc$ of tuples %$p\in\mReal^+\times$
-$\mReal^n$
-is caled a~trace. A~single element $p_i=\pi(i)$ of a~trace $\pi$ is
-called a~point.
-%The first point in a~trace $s_0=\pi(0)$ is called
-%a~seed and a~trace starting with a~seed $s_0$ may be denoted as
-%$\pi_{s_0}$.
-A suffix of points $p_i,p_{i+1},\dotsc$ of a~trace is
-denoted as $\pi^i$.
-%The first field of the~point vector is called
-%a~time stamp.
-A~fact that $p_i$ predeceases $p_{i+1}$ in a~trace is denoted as
-$p_i\rightarrow p_{i+1}$.
-%Trace points can be ordered in a~strictly
-%monotonic fashion based on their times tamps:
-%$p_i\rightarrow p_j\overset{def}{\iff} p_i(0)<p_j(0);i,j\in\mNatural_0$.
+Let $n\in\mNatural$ be the number of state variables of a~system,
+then:
+\begin{inparaenum}[\upshape a\itshape)]
+\item a~sequence $\pi=p_0,p_1,\dotsc$ of tuples
+$p_i\in\mReal_{+}^n$ is caled a~trace;
+\item single element $p_i=\pi(i)$ of a~trace $\pi$ is
+called a~point;
+\item the first point in a~trace $p_0=\pi(0)$ is called
+a~seed;
+\item a suffix of points $p_i,p_{i+1},\dotsc$ of a~trace is
+denoted $\pi^i$;
+\item a~fact that $p_i$ predeceases $p_{i+1}$ in a~trace is
+denoted~$p_i\rightarrow p_{i+1}$.
+\end{inparaenum}
 \end{mydef}
-
-%To be able to access the temporal field of a~trace point,
-%a~time projection function $\tau$ is defined.
-%\begin{mydef}[Time Projection]
-%Let $\pi$ be a~trace and $n\in\mNatural^+$ the number of state
-%variables trace $\pi$ involves. A~function
-%$\tau:\mReal^+\times\mReal^n\rightarrow\mReal^+$ is called a~time
-%projection and, given a~point $p\in\pi$, it provides the time stamp
-%$\tau(p)$ of that point.
-
-%Naturally, the definition can be extended to a trace as well;
-%$\hat{\tau}(\pi)=\tau(p_0),\tau(p_1),\dotsc;p_i\in\pi$
-%is then a~strictly monotonic sequence of relevant time stamps.
-%\end{mydef}
 
 As far as dynamic systems are concerned, their evolution approximation
 obtained as a~result of a~numerical method is always \emph{discrete and
 finite}. The same holds for sampled real-life system experiments.
+However, an infinite sequence is considered wherever formal reasons
+require it.
 
-In case an infinitely long discrete trace comprises only a~finite number
-of distinct points, it contains a~cycle. Such a~situation might be
-denoted as follows\cite{biere}.
+\section{Trace Properties}
+Real system traces may be either \emph{divergent} -- in which case
+a~system generates just an infinite sequence of points -- or
+\emph{convergent}. In~the convergent case, two situations are possible;
+a~point \emph{equilibrium} and a~\emph{limit cycle}. A~system may reach
+the point equilibrium either asymptotically or sliding downwards
+a~spiral. These situations are depicted in figure \ref{fig:trace:kinds}.
+
+In addition, equilibrium and limit cycle are traces in which
+points repeat ad infinitum and the trace contains exactly one loop.
+Hence the loop definition.
 \begin{mydef}[K-Loop]
 For $l\leq k;l,k\in\mNatural_0$ a~trace $\pi$ is called a~$(k,l)$-loop
 if $\pi(k)\rightarrow\pi(l)$ and
 $\pi=p_0,\dotsc,\overline{p_{l},\dotsc,p_{k},}$
-A~$(k,l)$-loop may be called simply a~$k$-loop as well. 
+A~$(k,l)$-loop may be called simply a~$k$-loop as well or, if $l=k$,
+a~self-loop.
 \end{mydef}
-A~loop is a~natural property of many real-life systems and represents
-either an equlibrium $l=k$ or a~limit
-cycle $l<k$\cite{sven}.
-
-\section{Trace Properties}
-Here, few trace qualities are enumerated including a~brief
-description \cite{sven}\cite{rizk}:
-\begin{inparaenum}[\itshape a\upshape)]
-	\item\emph{reachability} given a~seed, one asks whether a~trace
-		manages to reach \emph{a~specified region};
-	\item\emph{attractor} given a~sample of seeds, the question:
-		``Is there a~point, a~cycle or a~set in the traces phase space
-		that some traces reach and remain in?" may be thought of as an
-		informal description of an attractor \cite{wiki-atractor};
-	\item\emph{repellor} in a~dynamic system of a~ball being dropped on
-		a~steep hill from certain hight, the hill top acts as a~repellor
-		as hitting it so that the ball eventually rests on it is
-		unlikelly to happen \cite{wiki-repellor}.
-	\item\emph{inevitability} the system necessarily fulfils given
-		specification;
-	\item\emph{invariance} a~property is always true
-	\item\emph{response} fulfiling a~specification $\varphi$ triggers
-		validity of a~specification $\psi$.
-\end{inparaenum}
-
-What all these trace properties have in common is they can be expressed
-as an \ltl formula with real-based constraints as atomic
-propositions\cite{sven}. Moreover, a~trace can be verified against
-an \ltl formula. Therefore, the \ltl semantics is introduced.
+\begin{figure}
+\label{fig:trace:kinds}
+\caption{Trace Kinds}
+\end{figure}
+A~$k$-loop system trace may express both \emph{liveness}
+and \emph{reachability} properties. These could be \emph{attractor} or
+\emph{invariance}\cite{rizk}. On the other hand, only reachability
+properties can be verified over a~divergent trace. These might contain
+\emph{inevitability} or \emph{response}\cite{rizk}. What these trace
+properties have in common is they can be expressed as \ltl formulae
+over real-based constraints\cite{sven}. Therefore, the \ltl semantics
+is introduced.
 
 \subsection{LTL Semantics}
 \subsubsection*{Kripke Structure}
@@ -434,5 +405,10 @@ a~trace with a~point equilibrium, the cycle detector has to cooperate
 with the numeric method such that the lost of precision related to
 approaching the equlibrium is reported as a~self-loop. Othervise,
 detecting a~self-loop on filtered trace is impossible because the
-approaching doesn't trigger a~change in atomic proposition evaluation. 
+approaching doesn't trigger a~change in atomic proposition evaluation.
+In case an infinitely long discrete trace comprises only a~finite number
+of distinct points, it contains a~cycle. Such a~situation might be
+denoted as follows\cite{biere}.
+
+
 \end{document}
