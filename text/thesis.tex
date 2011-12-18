@@ -1,4 +1,7 @@
 \documentclass[12pt,oneside,draft]{fithesis}
+\usepackage{etex}
+%\reserveinserts{128}
+
 \usepackage[plainpages=false, pdfpagelabels]{hyperref}
 %\usepackage{amssym}
 \usepackage{amsfonts}
@@ -6,7 +9,11 @@
 \usepackage{amsthm}
 \usepackage{graphics}
 \usepackage{paralist}
+%\usepackage{m-pictex}
 \usepackage{color}
+\usepackage[chapter]{algorithm}
+\usepackage{program}
+
 
 %
 \newcommand{\ltl}{\textsc{ltl}~}
@@ -102,11 +109,11 @@ Both sources describing values of concentrations of $n$ state variables,
 the domain considered is~$\mReal_{+}^n$.
 
 \begin{mydef}[Trace]
-Let $n\in\mNatural$ be the number of state variables of a~system,
+Let $n\in\mNatural$ be the number of state variables $x_i$ of a~system,
 then:
 \begin{inparaenum}[\upshape a\itshape)]
 \item a~sequence $\pi=p_0,p_1,\dotsc$ of tuples
-$p_i\in\mReal_{+}^n$ is caled a~trace;
+$p_i\equiv(x_1,x_2,\dotsc,x_n)\in~\mReal_{+}^n$ is caled a~trace;
 \item single element $p_i=\pi(i)$ of a~trace $\pi$ is
 called a~point;
 \item the first point in a~trace $p_0=\pi(0)$ is called
@@ -121,44 +128,33 @@ denoted~$p_i\rightarrow p_{i+1}$.
 As far as dynamic systems are concerned, their evolution approximation
 obtained as a~result of a~numerical method is always \emph{discrete and
 finite}. The same holds for sampled real-life system experiments.
-However, an infinite sequence is considered wherever formal reasons
-require it.
+Moreover, these systems being deterministic\cite{sven}, only
+deterministic models are considered troughout the text.
 
 \section{Trace Properties}
-Real system traces may be either \emph{divergent} -- in which case
-a~system generates just an infinite sequence of points -- or
-\emph{convergent}. In~the convergent case, two situations are possible;
-a~point \emph{equilibrium} and a~\emph{limit cycle}. A~system may reach
-the point equilibrium either asymptotically or sliding downwards
-a~spiral. These situations are depicted in figure \ref{fig:trace:kinds}.
+Real-life deterministic system traces may be either \emph{divergent} --
+in which case a~system generates just an infinite sequence of points --
+or \emph{convergent}. In~the convergent case, two situations are
+possible; a~point \emph{equilibrium} and a~\emph{limit cycle}. As far as
+the point equilibrium is considered, a~system may reach it either
+asymptotically or sliding downwards a~spiral. Similarily, the limit
+cycle too behaves as an \emph{attractor}. These situations are depicted
+in figure \ref{fig:trace:kinds}.
 
-In addition, equilibrium and limit cycle are traces in which
-points repeat ad infinitum and the trace contains exactly one loop.
-Hence the loop definition.
-\begin{mydef}[K-Loop]
-For $l\leq k;l,k\in\mNatural_0$ a~trace $\pi$ is called a~$(k,l)$-loop
-if $\pi(k)\rightarrow\pi(l)$ and
-$\pi=p_0,\dotsc,\overline{p_{l},\dotsc,p_{k},}$
-A~$(k,l)$-loop may be called simply a~$k$-loop as well or, if $l=k$,
-a~self-loop.
-\end{mydef}
-\begin{figure}
-\label{fig:trace:kinds}
-\caption{Trace Kinds}
-\end{figure}
-A~$k$-loop system trace may express both \emph{liveness}
-and \emph{reachability} properties. These could be \emph{attractor} or
-\emph{invariance}\cite{rizk}. On the other hand, only reachability
-properties can be verified over a~divergent trace. These might contain
-\emph{inevitability} or \emph{response}\cite{rizk}. What these trace
-properties have in common is they can be expressed as \ltl formulae
-over real-based constraints\cite{sven}. Therefore, the \ltl semantics
-is introduced.
+From the qualitative point of view, convergent traces express
+\emph{liveness} and \emph{reachability} properties whereas
+divergent traces allow only reachability properties to emerge.
+To name some representants of these wider quality classes,
+attractors and  \emph{invariance} are examples of liveness
+properties whereas \emph{inevitability} and \emph{response} represent
+the reachability class\cite{rizk}. What these have in common is they
+can be expressed as \ltl formulae over real-based
+constraints\cite{sven}. Therefore, the \ltl semantics is introduced.
 
 \subsection{LTL Semantics}
 \subsubsection*{Kripke Structure}
-A~Kripke structure is a~common and satisfying way of modeling a~system,
-especially for the purpose of the model validation\cite{clarke}.
+A~Kripke structure is a~common way of modeling a~system for the purpose
+of property validation\cite{clarke}.
 \begin{mydef}[Kripke Structure]
 Let ${AP}$ be a set of atomic propositions.
 A~Kripke structure\cite{clarke} $M$ over $AP$ is a~tuple
@@ -173,14 +169,16 @@ $M=(S, S_0, R, L)$ where
 \end{mydef}
 In the text, real-constraint atomic propositions are considered.
 An example of such a~constraint could be
-$a\equiv x_i \geq c;c\in\mReal$.
+$a\in AP;a\equiv x_i \geq c;c\in\mReal$, where $x_i$ represents a~state
+variable value.
 
+The \ltl semantics being defined over a~kripke structure path, following
+is the path definition\cite{clarke}.
 \begin{mydef}[Kripke Structure Path]
 A~path\cite{biere} $\rho_M=s_0,s_1,\dotsc$ starting at a~state
-$s$ in the structure $M$ is an infinite sequence of states
-$s_i, s = s_0$ such that
-$\forall i \in \mNatural_0: (s_i, s_{i+1}) \in R$ which may be denoted
-as $s_i\rightarrow s_{i+1}$, too. 
+$s_0\in S_0$ in the structure $M$ is an infinite sequence of states
+$s_i$ such that $\forall i \in \mNatural_0: (s_i, s_{i+1}) \in R$
+which may be denoted $s_i\rightarrow s_{i+1}$, too. 
 Furthermore, $\rho_M(i)=s_i$ is the $i$-th state on the path and
 $\rho_M^i=s_i,s_{i+1},\dotsc$ denotes an endless suffix of states
 starting at the position $i$.
@@ -213,14 +211,16 @@ an \textsc{ltl} formula. Then a relation $\rho_M\models\varphi$
 %\end{inparaenum}
 \end{mydef}
 
+Here, the notion of \ltl formula validity with regards to a~kripke
+structure path is introduced.
 \begin{mydef}[Validity]
 An \ltl formula $\varphi$ is universally valid in a~Kripke structure $M$
 if $\rho_M\models\bA\varphi\iff\rho_M\models\varphi$ holds for all
-paths wiht $\rho_M(0)\in S_0$.
+paths wiht $\rho_M(0)~\in~S_0$.
 
 An \ltl formula $\varphi$ is existentially valid in a~Kripke structure
-$M$ if $\rho_M\models\bE\varphi\iff\rho_M\models\varphi$ holds for all
-paths with $\rho_M(0)\in S_0$\cite{biere}.
+$M$ if $\rho_M~\models~\bE~\varphi\iff\rho_M\models\varphi$ holds for
+at least one path with $\rho_M(0)~\in~S_0$\cite{biere}.
 \end{mydef}
 
 
@@ -229,43 +229,50 @@ universally) valid in a~given Kripke structure is called an
 \emph{existential} (resp. an \emph{universal}) \emph{model checking}
 problem\cite{biere}.
 
+There are multiple ways how to verify \ltl formula validity over kripke
+structure paths. For some structures -- especially those with
+\emph{lasso-shaped} paths -- the bounded model checking is an effective
+validation method \cite{biere}. Therefore, it is introduced as well.
+
 \subsection{Bounded Model Checking}
-In case of bounded model checking one consideres a~prefix of the path
-$\rho_M$, $k\in\mNatural$ symbols long that is sufficient as a~witness
-in case of existential problem\cite{biere}. Intuitively, if all
-possible prefixes are checked, the method is equal to common \ltl model
+The idea of bounded model checking stems from considering only a~prefix
+of a~path to check formula validity. One way of doing it is ``unrolling''
+temporal operators of the formula to get a~new formula comprising only
+first order logic operators and original atomic propositions attached
+to a~particular position on the path. Intuitively, if all possible
+prefixes are checked, the method is equivalent to common \ltl model
 checking approaches. Thus, if \ltl is considered, there is an upper
 limit $k=|2^{AP}|$ of the counterexample length\cite{biere}. However, in
 special case of a~\emph{lasso-shaped} path, a~smaller bound $k=|AP^2|$
-exists\cite{biere}. Below, the semantics of bounded model checking is
-introduced.
+exists\cite{biere}.
 
-\subsubsection*{Bounded Semantics}
-The idea of finding a~counterexample lies in unrolling temporal
-operators in a~formula $\varphi$ to get a~formula $\phi$ comprising
-of first order logic operators and original atomic propositions
-``attached'' to a~particular position in $\rho_M$.
+As far as the semantics is considered, boudned model checking
+distinguishes between cyclic and acyclic paths. Therefore, the $k$-loop
+definition follows.
+\begin{mydef}[K-Loop]
+For $l\leq k;l,k\in\mNatural_0$ a~path $\rho$ is called a~$(k,l)$-loop
+if $\rho(k)\rightarrow\rho(l)$ and
+$\rho=p_0,\dotsc,\overline{p_{l},\dotsc,p_{k},}$
+A~$(k,l)$-loop may be called simply a~$k$-loop as well or, if $l=k$,
+a~self-loop.
+\end{mydef}
+As $k$-loop and lasso-shaped path refer to the same path property, they
+are used interchangeably in the text.
 
-In bounded model checking, one uses only first $k+1$ elements of
-a~path $\rho_M$ to determine the validity of the formula along the
-path\cite{biere}.
+If a~path is a~$k$-loop, the standard semantics of \ltl is maintained,
+whereas in case of an acyclic path, the \ltl operator $\bG$ is always
+false as nothing repeats in $\rho_M$ making it intuitivelly impossible
+to decide.
 
-If a~path is a~$k$-loop, the standard semantics of \ltl is maintained --
-for the definition, see again\cite{biere}. The $\models$ operator gets
-an index $\models_k$ to denote the bound.
-
-In case of an acyclic path, the $\models$ operator is redefined to
-$\models_k^i$ where the $i$ means a~\emph{position in the prefix} to
-consider. Moreover, the \ltl operator $\bG$ is always false as nothing
-repeats in $\rho_M$ making it impossible to be decided. For semantics
-of other \ltl operators over a~finite path see once more\cite{biere}.
-
-As far as the translation from $\varphi$ to $\phi$ is considered,
-only the acyclic part is introduced here for the
-sake of brevity. Both the acyclic and loop definitions are due to
-Biere et al\cite{biere}.
-
-\begin{mydef}[LTL Formula Translation without a Loop]
+As far as the unrolling--translation is considered, only the cyclic part
+is introduced here for the sake of brevity.
+Both the clic translation and $k$-loop definitions are due to Biere
+et al.
+\begin{mydef}[Successor in a~Loop]
+Let $k,l,i\in\mNatural_0$, with $l,i \leq k$. The successor $succ(i)$ is
+defined as follows. $succ(i)=i+1$ if $i<k$ and $succ(i)=l$ otherwise.
+\end{mydef}
+\begin{mydef}[LTL Formula Translation with a Loop]
 For an LTL formula $\varphi$ and $i,j,k\in\mNatural$, with $i\leq k$ and
 $p\in {AP}_\varphi$, ${AP}_\varphi$ being the set of atomic propositions
 of $\varphi$
@@ -276,6 +283,8 @@ of $\varphi$
 		[[\varphi]]_k^i\wedge[[\psi]]_k^i\\
 	[[\varphi\vee\psi]]_k^i&\rightarrow
 		[[\varphi]]_k^i\vee[[\psi]]_k^i\\
+\end{align}
+\begin{align}
 	[[\bX\varphi]]_k^i&\rightarrow[[\varphi]]_k^{i+1}\\
 	[[\bG\varphi]]_k^i&\rightarrow\bot\\
 	[[\bF\varphi]]_k^i&\rightarrow\bigvee_{j=i}^k[[\varphi]]_k^j\\
@@ -291,17 +300,20 @@ However, the definition being recursive, it is very unefficient to
 apply the $[[\cdot]]_k^i$ operator every time as the procedure would
 make exponentially many operations with regard to $k$ in that case.
 Instead, one has to utilize sub-formula sharing to improve the
-performance to a~polynomial time\cite{biere}.
+performance to a~polynomial time when implementing\cite{biere}. In next
+chapter, a~method is introduced describing how to utilize the bounded
+model checking approach for real-life system traces.
 
 \chapter{Metodology}
 \section{Filter}
-The key feature is the equivalence of trace points based on atomic
-propositions validity. For that purpose, the relation $\sim$ is defined.
-It legitimates the filtering of a~trace. Interestingly,
-a~filtered trace resembles very closely what was previously defined as
-a kripke structure path. Therefore $\sim$ allows \ltl model checking
-to be applied to traces as it removes the stuttering from
-them\cite{lamport}.
+As far as real-life system approximation traces model checking
+is considered, the crucial factor is the stuttering it inevitably
+contains\cite{lamport}. To deal with this feature, a~filtering
+is introduced which has two benefits -- it both relaxes the length of
+a~trace as well as it justifies $\bX$ operator usage. The key here
+is the equivalence of trace points based on atomic propositions
+validity. For that purpose, the relation $\sim$ is defined over a~system
+trace.
 \begin{mydef}[Point Equivalence]
 Points $p_i,p_j\in\pi$ are equivalent in $\sim$ if and only if following
 condition holds.
@@ -354,51 +366,73 @@ As a~consequence, $\sim$~partitions a~trace $\pi$ into
 atomic propositions while remaining a~continuous sequence. Selecting
 only the representants of particular classes, one is able to forget
 other class points for the purpose of propositions validity checking
-as they don't change it. It is useful especially for processing
-finite sequences produced by numeric methods as plenty of resources can
-be saved this way. Therefore, the implementation verifies only the
-representants. These are selected as the first -- by means of
-the $\rightarrow$ relation -- elements $q$ such that
-$p\rightarrow q\wedge[p]\neq[q]$.
+as they don't change it. Following definition therefore introduces
+the notion of a~filtered trace.
+\begin{mydef}[Filtered Trace] Let $\pi=p_0,p_1,\dotsc$ be a~system
+trace. A~filtered trace $\tilde{\pi}$ is a~sequence of partition
+$\pi/_{\sim}$ classes representants
+$\tilde{\pi}=\tilde{p}_0,\tilde{p}_1,\dotsc$ such that
+\begin{align}
+\tilde{p}_{0}=&p_0\\
+\tilde{p}_{i}=&p_k:p_{k-1}\rightarrow p_{k},\nonumber\\
+	&p_{k-1}\in[\tilde{p}_{i-1}]
+	\wedge p_k\in[\tilde{p}_{i}];\nonumber\\
+	&k,l\in\mNatural,p_k,p_{k-1}\in\pi.
+\end{align}
+Naturarlly, the arrow notation can be adopted for filtered traces, too;
+the relation $\tilde{p}_{i-1}$ is a~predecessor of $\tilde{p}_{i}$ can
+be denoted $\tilde{p}_{i-1}\rightarrow\tilde{p}_{i}$ as well.
+\end{mydef}
+In words, representants are selected as the first elements -- with
+regards to the $\rightarrow$ relation -- belonging to different
+partition classes. The usual notation $\tilde{\pi}(i),\tilde{\pi}^i$
+applies here as well.
+
+Given a~seed $p_0$, particular filtered trace rooted in this seed may be
+considered a~kripke structure path with the labeling function returning
+atomic propositions valid in particular trace point. For the bounded
+model checking however the bound and cycle presence has to be checked.
+These goals can be achieved by a~\emph{cycle detection} algorithm as
+a~good bound for lasso-shaped as well as divergent traces is their
+length possibly including the loop\cite{biere}. For the sake of brevity,
+no cycle detection algorithm is introduced but
+Brent's\cite{wikipedia:loop} has been adopted here.
 
 \section{Cycle Detection}
-Recalling the $k$-loop definition and refering to the bounded model
-checking, it is possible to argue about properties containing the $\bG$
-operator even on finite-element traces\cite{biere}. For that purpose,
-the prototype comprises two cycle detector implementations and compares
-key aspects of both of them. Before that, here is some background about
-the trace looping.
+It is assumed that the $\sim$ relation holds even for cyclic
+traces\cite{biere}.
 
 Even though it would be possible -- and more accurate -- to check
 a~trace for loop presence directly on evaluated states, it wouldn't
-work on spiral paths. As an example situation, condsider a 2D spiral
-trace which has a point equilibirium in $x',y'$ and an \ltl property
+work on spiral paths. As an example situation, condsider a~2D~spiral
+trace which has a~point equilibirium in $x',y'$ and an \ltl property
 $\bF((x\ge x'-\epsilon_x)\wedge(x\le x'+\epsilon_x))\wedge
 \bF((y\ge y'-\epsilon_y)\wedge(y\le y'+\epsilon_y))$ checking this
 equilibrium with some explicit inaccuracy $\epsilon_x,\epsilon_y$.
 As the evaluation vector repeats in this case three times till
 it reaches the equlibrium, the first repetition is labeled as a~cycle.
-The cycle effectivelly blocking the rest of the trace to be inspected
-renders the obviously true property invalid. See the
+The cycle effectivelly blocking the rest of the inspected trace renders
+the obviously true property invalid; see the
 figure \ref{spiral}.
 \begin{figure}
-\input{spiral}
+%\input{spiral}
 \caption{Spiral Equilibrium Property}
 \label{spiral}
 \end{figure}
 Therefore, cycles are being detected on the trace values directly.
 However, even this approach has got its drawbacks. One of them
-is the comparision inacurracy, other the fact that a~dense spiral might
-be considered a cycle even though it wasn't. Moreover, even filtered
-(dense) spiral traces might comprise a~huge amount of point classes
-making the bounded model checking approach impracticable.
+is the comparision inacurracy causing a~cycle either being detected
+after unnecessary looping or not at all. Other the fact that a~dense
+spiral might be considered a cycle even though it wasn't. Moreover, even
+filtered (dense) spiral traces might comprise a~huge amount of point
+classes making the bounded model checking approach impracticable.
 
 On the other hand, if the filtered trace contains a~real limit cycle,
 the sequence of evaluated states creates a~lasso-shape making the
 bounded model checking approach run in $O(|AP|^2)$ of steps
 instead of $O(2^{|AP|})$\cite{biere}. For that purpose, the bound is
-determined as the loop property or the filtered trace lengt in case
-no limit loop is present.
+determined as the filtered trace length possibly including the loop, if
+present.
 
 A~self-loop in a~trace requires special handling as well. In case of
 a~trace with a~point equilibrium, the cycle detector has to cooperate
@@ -406,9 +440,74 @@ with the numeric method such that the lost of precision related to
 approaching the equlibrium is reported as a~self-loop. Othervise,
 detecting a~self-loop on filtered trace is impossible because the
 approaching doesn't trigger a~change in atomic proposition evaluation.
-In case an infinitely long discrete trace comprises only a~finite number
-of distinct points, it contains a~cycle. Such a~situation might be
-denoted as follows\cite{biere}.
 
 
+\section{Algorithm}
+Considering above limitations, an algorithm comprising simulation,
+filtering, cycle detection and bounded model checking is introduced.
+
+\begin{figure}
+\label{fig:trace:kinds}
+\caption{Trace Kinds}
+\end{figure}
+
+\noindent
+\subsubsection*{Algorithm}
+\begin{algorithm}
+	\caption{Simulation, Cycle Detection, Filter}
+	\label{simulationCycleDetectFilter}
+	\begin{program}
+%		\BEGIN
+			\PROC |Simulation|(\varphi, p_0, k_{\omega}) \BODY
+			|Initialize numerics|(p_0, k_{\omega});
+			|Initialize|\sim(\varphi, p_0);
+			k, l := \keyword{None}, \keyword{None};
+			p:=p_0;
+			\tilde{\pi}:=p;
+			\WHILE |True|
+			\DO
+				\WHILE p\sim|numerics|(p)
+				\DO
+					p:=|numerics|(p);
+				\OD
+				\IF (k,l):=|cycle|(p)
+				\THEN
+					\keyword{break};
+				\FI
+				\IF |end| |of| |numerics|(p)
+				\THEN
+					\keyword{break};
+				\FI
+				\tilde{\pi}:=\tilde{\pi}\cdot p
+			\OD
+			\keyword{return}(\tilde{\pi},k,l);
+			\ENDPROC
+%		\END
+	\end{program}
+\end{algorithm}
+
+\begin{algorithm}
+	\caption{Model Checking}
+	\label{modelChecking}
+	\begin{program}
+		\keyword{require}\:(\varphi,p_0,k_\omega);
+		\BEGIN
+			|result| := \top;
+			(\tilde{\pi},k,l):=|Simulation|(\varphi, p_0, k_\omega);
+			\IF l \neq \keyword{None}
+			\THEN
+				\FOREACH a\in {}_l[[\varphi]]_k^0 \rcomment{cyclic}
+				\DO
+					|result| := |result| \wedge a(\tilde{\pi});
+				\OD
+			\ELSE
+				\FOREACH a\in [[\varphi]]_k^0 \rcomment{acyclic}
+				\DO
+					|result| := |result| \wedge a(\tilde{\pi});
+				\OD
+			\FI
+			\keyword{return}\:|result|
+		\END
+	\end{program}
+\end{algorithm}
 \end{document}
