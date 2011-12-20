@@ -10,9 +10,10 @@
 \usepackage{graphics}
 \usepackage{paralist}
 %\usepackage{m-pictex}
-\usepackage{color}
+%\usepackage{color}
 \usepackage[chapter]{algorithm}
 \usepackage{program}
+\usepackage[numbers]{natbib}
 
 
 %
@@ -93,7 +94,7 @@ was reached.
 In such a~session, the framework provides simulation traces of the
 system observed over the time specified. The simulation being rather
 straightforward, a~common integrator -- such as provided in the
-\textsc{lsoda} \cite{lsoda} package -- may be used.
+\textsc{lsode} \cite{lsode} package -- may be used.
 An output in this case is an approximation of a~continuous trajectory
 of the dynamic system.
 
@@ -151,8 +152,7 @@ the reachability class\cite{rizk}. What these have in common is they
 can be expressed as \ltl formulae over real-based
 constraints\cite{sven}. Therefore, the \ltl semantics is introduced.
 
-\subsection{LTL Semantics}
-\subsubsection*{Kripke Structure}
+\section{LTL Semantics}
 A~Kripke structure is a~common way of modeling a~system for the purpose
 of property validation\cite{clarke}.
 \begin{mydef}[Kripke Structure]
@@ -234,14 +234,14 @@ structure paths. For some structures -- especially those with
 \emph{lasso-shaped} paths -- the bounded model checking is an effective
 validation method \cite{biere}. Therefore, it is introduced as well.
 
-\subsection{Bounded Model Checking}
+\section{Bounded Model Checking}
 The idea of bounded model checking stems from considering only a~prefix
 of a~path to check formula validity. One way of doing it is ``unrolling''
 temporal operators of the formula to get a~new formula comprising only
 first order logic operators and original atomic propositions attached
 to a~particular position on the path. Intuitively, if all possible
 prefixes are checked, the method is equivalent to common \ltl model
-checking approaches. Thus, if \ltl is considered, there is an upper
+checking approaches. If \ltl is considered, there is an upper
 limit $k=|2^{AP}|$ of the counterexample length\cite{biere}. However, in
 special case of a~\emph{lasso-shaped} path, a~smaller bound $k=|AP^2|$
 exists\cite{biere}.
@@ -396,11 +396,11 @@ These goals can be achieved by a~\emph{cycle detection} algorithm as
 a~good bound for lasso-shaped as well as divergent traces is their
 length possibly including the loop\cite{biere}. For the sake of brevity,
 no cycle detection algorithm is introduced but
-Brent's\cite{wikipedia:loop} has been adopted here.
+Brent's\cite{wloop,brent} has been adopted here.
 
 \section{Cycle Detection}
-It is assumed that the $\sim$ relation holds even for cyclic
-traces\cite{biere}.
+%It is assumed that the $\sim$ relation holds even for cyclic
+%traces\cite{biere}.
 
 Even though it would be possible -- and more accurate -- to check
 a~trace for loop presence directly on evaluated states, it wouldn't
@@ -410,16 +410,16 @@ $\bF((x\ge x'-\epsilon_x)\wedge(x\le x'+\epsilon_x))\wedge
 \bF((y\ge y'-\epsilon_y)\wedge(y\le y'+\epsilon_y))$ checking this
 equilibrium with some explicit inaccuracy $\epsilon_x,\epsilon_y$.
 As the evaluation vector repeats in this case three times till
-it reaches the equlibrium, the first repetition is labeled as a~cycle.
-The cycle effectivelly blocking the rest of the inspected trace renders
-the obviously true property invalid; see the
-figure \ref{spiral}.
+it reaches the equlibrium -- see the figure \ref{spiral} --  the first
+repetition is labeled as a~cycle. The cycle effectivelly blocking the
+rest of the inspected trace renders the obviously true property invalid.
+Therefore, cycles are being detected on the trace values directly.
 \begin{figure}
 %\input{spiral}
 \caption{Spiral Equilibrium Property}
 \label{spiral}
 \end{figure}
-Therefore, cycles are being detected on the trace values directly.
+
 However, even this approach has got its drawbacks. One of them
 is the comparision inacurracy causing a~cycle either being detected
 after unnecessary looping or not at all. Other the fact that a~dense
@@ -446,39 +446,76 @@ approaching doesn't trigger a~change in atomic proposition evaluation.
 Considering above limitations, an algorithm comprising simulation,
 filtering, cycle detection and bounded model checking is introduced.
 
+Algorithm \ref{simulationCycleDetectFilter} houses the procedure of
+the numeric method, cycle detector and filter. The input parameters are:
+\begin{inparaenum}[\itshape a\upshape)]
+	\item{$\varphi$} the \ltl formula to use for $\sim$ relation
+		computation;
+	\item{$p_0$} the seed to be used both with the $\sim$ and numeric
+		method initialization; and
+	\item{$k_{\omega}$} the maximal amount of steps the numeric method
+		should take.
+\end{inparaenum}
+
+To simulate particular system, custom numeric method is utilized.
+Trace points are generated until the integration performs $k_{\omega}$
+steps. In each step, their presence in a~single $\sim$ partition class
+is checked. If the class changes, new representant is identified
+and is appended to the filtered trace.
+
+As an equilibrium may be encountered only while points remain within
+a~single class, the equilibrium property is checked in each numeric
+method step. The integration precission lost is considered a~point
+equilibrium case. In that event, a~self-loop on the last point is
+reported.
+
+In case a~limit cycle is encountered, the filtered trace is terminated
+before steps count reaches the $k_{\omega}$ limit and cycle start is
+repored in addition to the filtered trace length. Here, the memory-less
+Brent's cycle detection algorithm is utilized\cite{wloop,brent}
+-- only one point is needed to decide the cycle presence considering
+proper detector initialization.
+
+Worth mentioning, it is assumed that if a~cycle is detected over
+a~filtered trace, a~cycle must be present in unfiltered trace, too.
+
 \begin{figure}
 \label{fig:trace:kinds}
 \caption{Trace Kinds}
 \end{figure}
 
-\noindent
-\subsubsection*{Algorithm}
+
 \begin{algorithm}
 	\caption{Simulation, Cycle Detection, Filter}
 	\label{simulationCycleDetectFilter}
 	\begin{program}
 %		\BEGIN
 			\PROC |Simulation|(\varphi, p_0, k_{\omega}) \BODY
-			|Initialize numerics|(p_0, k_{\omega});
-			|Initialize|\sim(\varphi, p_0);
-			k, l := \keyword{None}, \keyword{None};
+			|Initialize numerics|(p_0);
+			|Initialize|\sim|counting|(\varphi, p_0);
+			|Initialize cycle detector|(p_0);
+			k:=l:=0;
 			p:=p_0;
 			\tilde{\pi}:=p;
-			\WHILE |True|
+			steps:=1;
+			\WHILE steps < k_{\omega}
 			\DO
-				\WHILE p\sim|numerics|(p)
+				\WHILE p\sim|numerics|(p) \wedge steps < k_{\omega}
 				\DO
 					p:=|numerics|(p);
+					\IF |numeric precission lost|(p)\rcomment{equilibrium}
+					\THEN
+						l:=k;\rcomment{selfloop}
+						\keyword{return}(\tilde{\pi},k,l);
+					\FI
+					steps:=steps+1;
 				\OD
-				\IF (k,l):=|cycle|(p)
+				\IF l:=|cycle detected|(p)\rcomment{limit cycle}
 				\THEN
 					\keyword{break};
 				\FI
-				\IF |end| |of| |numerics|(p)
-				\THEN
-					\keyword{break};
-				\FI
-				\tilde{\pi}:=\tilde{\pi}\cdot p
+				\tilde{\pi}:=\tilde{\pi},p;
+				k:=k+1;\rcomment{new representant}
 			\OD
 			\keyword{return}(\tilde{\pi},k,l);
 			\ENDPROC
@@ -486,28 +523,34 @@ filtering, cycle detection and bounded model checking is introduced.
 	\end{program}
 \end{algorithm}
 
+The algorithm \ref{modelChecking} utilizes output of the Simulation
+procedure and -- based on a~cycle presence -- performs the bounded
+model checking formula unrolling of $\varphi$. The unrolled expression
+is then applied to the filtered path to obtain a~true--false result.
+
+
 \begin{algorithm}
 	\caption{Model Checking}
 	\label{modelChecking}
 	\begin{program}
 		\keyword{require}\:(\varphi,p_0,k_\omega);
 		\BEGIN
-			|result| := \top;
 			(\tilde{\pi},k,l):=|Simulation|(\varphi, p_0, k_\omega);
-			\IF l \neq \keyword{None}
+			\IF l \neq 0
 			\THEN
-				\FOREACH a\in {}_l[[\varphi]]_k^0 \rcomment{cyclic}
-				\DO
-					|result| := |result| \wedge a(\tilde{\pi});
-				\OD
+				\keyword{return}({}_l[[\varphi]]_k^0(\tilde{\pi})) \rcomment{cyclic}
 			\ELSE
-				\FOREACH a\in [[\varphi]]_k^0 \rcomment{acyclic}
-				\DO
-					|result| := |result| \wedge a(\tilde{\pi});
-				\OD
+				\keyword{return}([[\varphi]]_k^0(\tilde{\pi})) \rcomment{acyclic}
 			\FI
-			\keyword{return}\:|result|
 		\END
 	\end{program}
 \end{algorithm}
+
+\chapter{Evaluation}
+In global, the procedure repeats for each trace seed considered while
+the limit and the \ltl formula remain the same. Each trace then might
+therefore\dots
+\bibliographystyle{plainnat}
+\bibliography{thesis}
 \end{document}
+\backmatter
