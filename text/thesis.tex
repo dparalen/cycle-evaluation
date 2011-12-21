@@ -445,7 +445,7 @@ approaching doesn't trigger a~change in atomic proposition evaluation.
 \section{Algorithm}
 Considering above limitations, an algorithm comprising simulation,
 filtering, cycle detection and bounded model checking is introduced.
-
+\subsection*{Simulation}
 Algorithm \ref{simulationCycleDetectFilter} houses the procedure of
 the numeric method, cycle detector and filter. The input parameters are:
 \begin{inparaenum}[\itshape a\upshape)]
@@ -471,13 +471,15 @@ reported.
 
 In case a~limit cycle is encountered, the filtered trace is terminated
 before steps count reaches the $k_{\omega}$ limit and cycle start is
-repored in addition to the filtered trace length. Here, the memory-less
-Brent's cycle detection algorithm is utilized\cite{wloop,brent}
+reported in addition to the filtered trace length. Here, the memory-less
+Brent cycle detection algorithm is utilized\cite{wloop,brent}
 -- only one point is needed to decide the cycle presence considering
 proper detector initialization.
 
 Worth mentioning, it is assumed that if a~cycle is detected over
-a~filtered trace, a~cycle must be present in unfiltered trace, too.
+filtered trace, a~cycle containing all the filtered cycle points is
+present in the original trace, too. This fact is just empirically
+confirmed here as its proof is out of scope of this thesis.
 
 \begin{figure}
 \label{fig:trace:kinds}
@@ -490,8 +492,8 @@ a~filtered trace, a~cycle must be present in unfiltered trace, too.
 	\label{simulationCycleDetectFilter}
 	\begin{program}
 %		\BEGIN
-			\PROC |Simulation|(\varphi, p_0, k_{\omega}) \BODY
-			|Initialize numerics|(p_0);
+			\PROC |\em Simulation\rm|(\varphi, p_0, k_{\omega}) \BODY
+			|Initialize numerical simulation|(p_0);
 			|Initialize|\sim|counting|(\varphi, p_0);
 			|Initialize cycle detector|(p_0);
 			k:=l:=0;
@@ -500,10 +502,10 @@ a~filtered trace, a~cycle must be present in unfiltered trace, too.
 			steps:=1;
 			\WHILE steps < k_{\omega}
 			\DO
-				\WHILE p\sim|numerics|(p) \wedge steps < k_{\omega}
+				\WHILE p\sim|numerical simulation|(p) \wedge steps < k_{\omega}
 				\DO
-					p:=|numerics|(p);
-					\IF |numeric precission lost|(p)\rcomment{equilibrium}
+					p:=|numerical simulation|(p);
+					\IF |numerical precission lost|(p)\rcomment{equilibrium}
 					\THEN
 						l:=k;\rcomment{selfloop}
 						\keyword{return}(\tilde{\pi},k,l);
@@ -523,10 +525,12 @@ a~filtered trace, a~cycle must be present in unfiltered trace, too.
 	\end{program}
 \end{algorithm}
 
-The algorithm \ref{modelChecking} utilizes output of the Simulation
-procedure and -- based on a~cycle presence -- performs the bounded
-model checking formula unrolling of $\varphi$. The unrolled expression
-is then applied to the filtered path to obtain a~true--false result.
+\subsection{Model Checking}
+The algorithm \ref{modelChecking} utilizes output of the
+\emph{Simulation} procedure and -- based on a~cycle presence -- performs
+the bounded model checking formula unfolding of $\varphi$. The unfolded
+expression is then applied to the filtered path to obtain a~true--false
+result.
 
 
 \begin{algorithm}
@@ -535,7 +539,7 @@ is then applied to the filtered path to obtain a~true--false result.
 	\begin{program}
 		\keyword{require}\:(\varphi,p_0,k_\omega);
 		\BEGIN
-			(\tilde{\pi},k,l):=|Simulation|(\varphi, p_0, k_\omega);
+			(\tilde{\pi},k,l):=|\em Simulation\rm|(\varphi, p_0, k_\omega);
 			\IF l \neq 0
 			\THEN
 				\keyword{return}({}_l[[\varphi]]_k^0(\tilde{\pi})) \rcomment{cyclic}
