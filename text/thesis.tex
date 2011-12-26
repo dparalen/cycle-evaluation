@@ -9,10 +9,10 @@
 \usepackage{amsthm}
 \usepackage{graphics}
 \usepackage{paralist}
-%\usepackage{m-pictex}
-%\usepackage{color}
+\usepackage{pictex}
+\usepackage{color}
 \usepackage[chapter]{algorithm}
-\usepackage{program}
+\usepackage{algorithmic}
 \usepackage[numbers]{natbib}
 
 
@@ -179,7 +179,7 @@ introduced.
 A~function $\epsilon$ assigning either true or false values to
 all atomic propostions evaluated over all state variables of a~trace
 point $p;\epsilon(p)=e;e\in\{\top,\bot\}^m; \epsilon:\mReal_{+}^n
-\rightarrow\{\top,\bot\}^m;m=\mid AP\mid$ is called evaluation.
+\rightarrow\{\top,\bot\}^m;m=|AP|$ is called evaluation.
 \end{mydef}
 
 The \ltl semantics being defined over a~Kripke structure
@@ -261,8 +261,8 @@ first order logic operators and original atomic propositions attached
 to a~particular position on the path. Intuitively, if all possible
 prefixes are checked, the method is equivalent to common \ltl model
 checking approaches. If \ltl is considered, there is an upper
-limit $k=|2^{AP}|$ of the counterexample length\cite{biere}. However, in
-special case of a~\emph{lasso-shaped} path, a~smaller bound $k=|AP^2|$
+limit $k=2^{|AP|}$ of the counterexample length\cite{biere}. However, in
+special case of a~\emph{lasso-shaped} path, a~smaller bound $k={|AP|}^2$
 exists\cite{biere}.
 
 As far as the semantics is considered, boudned model checking
@@ -410,14 +410,14 @@ $\tilde{\pi}=\tilde{p}_0,\tilde{p}_1,\dotsc$ such that
 	&(p_{k-1}\rightarrow p_{k})\wedge(p_{k-1}\not\sim p_{k})
 \end{align}
 \end{mydef}
-Naturally, the arrow notation can be adopted for filtered traces;
-the relation $\tilde{p}_{i-1}$ is a~predecessor of $\tilde{p}_{i}$ can
-be denoted $\tilde{p}_{i-1}\rightarrow\tilde{p}_{i}$ as well.
-
 In words, representants are selected as the first elements -- with
 regards to the $\rightarrow$ relation -- belonging to different
-partition classes. The usual notation $\tilde{\pi}(i),\tilde{\pi}^i$
-applies here as well.
+partition classes. 
+
+Naturally, the arrow notation can be adopted for filtered traces;
+the relation $\tilde{p}_{i-1}$ is a~predecessor of $\tilde{p}_{i}$ can
+be denoted $\tilde{p}_{i-1}\rightarrow\tilde{p}_{i}$ as well. The usual
+notation $\tilde{\pi}(i),\tilde{\pi}^i$ applies here as well.
 
 Although any class representant could be chosen, the first is chosen
 deliberately for the forthcoming cycle detection to have biggest chance
@@ -428,7 +428,7 @@ considered a~Kripke structure path with the labeling function
 $\epsilon$.
 
 Considering a~numerical simulation timeout and the filtering,
-a~divergent trace properties are dealed with as the timeout and filter
+divergent trace properties are dealed with as the timeout and filter
 ensure a~finite and discrete trace suitable for divergent properties
 model checking. Moreover, the length of this trace is a~reasonable bound
 for the bounded model checking method\cite{biere}.
@@ -478,7 +478,7 @@ particular region until the equilibrium is reached -- see the Figure
 labeled as a~cycle. As this prevents the equilibrium point self-loop to
 be detected, the property $\varphi$ is verified as a~false-negative.
 \begin{figure}
-%\input{spiral}
+\input{spiral}
 \caption{Spiral Equilibrium Property}
 \label{spiral}
 \end{figure}
@@ -503,7 +503,7 @@ Considering above limitations, an algorithm comprising simulation,
 filtering, cycle detection and bounded model checking is introduced.
 \subsection*{Simulation}
 Algorithm \ref{simulationCycleDetectFilter} houses the procedure of
-the numeric method, cycle detector and filter. The input parameters are:
+the numerical method, cycle detector and filter. The input parameters are:
 \begin{inparaenum}[\itshape a\upshape)]
 	\item{$\varphi$} the \ltl formula to use for $\sim$ relation
 		computation;
@@ -513,7 +513,7 @@ the numeric method, cycle detector and filter. The input parameters are:
 		should take.
 \end{inparaenum}
 
-To simulate particular system, custom numeric method is utilized.
+To simulate particular system, custom numerical method is utilized.
 Trace points are generated until the integration performs $k_{\omega}$
 steps. In each step, their presence in a~single $\sim$ partition class
 is checked. If the class changes, new representant is identified
@@ -544,41 +544,33 @@ confirmed here as its proof is out of scope of this thesis.
 
 
 \begin{algorithm}
-	\caption{Simulation, Cycle Detection, Filter}
+	\caption{Simulation}
 	\label{simulationCycleDetectFilter}
-	\begin{program}
-%		\BEGIN
-			\PROC |\em Simulation\rm|(\varphi, p_0, k_{\omega}) \BODY
-			|Initialize numerical simulation|(p_0);
-			|Initialize|\sim|counting|(\varphi, p_0);
-			|Initialize cycle detector|(p_0);
-			k:=l:=0;
-			p:=p_0;
-			\tilde{\pi}:=p;
-			steps:=1;
-			\WHILE steps < k_{\omega}
-			\DO
-				\WHILE p\sim|numerical simulation|(p) \wedge steps < k_{\omega}
-				\DO
-					p:=|numerical simulation|(p);
-					\IF |numerical precission lost|(p)\rcomment{equilibrium}
-					\THEN
-						l:=k;\rcomment{selfloop}
-						\keyword{return}(\tilde{\pi},k,l);
-					\FI
-					steps:=steps+1;
-				\OD
-				\IF l:=|cycle detected|(p)\rcomment{limit cycle}
-				\THEN
-					\keyword{break};
-				\FI
-				\tilde{\pi}:=\tilde{\pi},p;
-				k:=k+1;\rcomment{new representant}
-			\OD
-			\keyword{return}(\tilde{\pi},k,l);
-			\ENDPROC
-%		\END
-	\end{program}
+	\begin{algorithmic}[1]
+		\STATE Initialize numerical simulation with $p_0$
+		\STATE Initialize $\sim$ counting with $\varphi, p_0$
+		\STATE Initialize cycle detector with $p_0$
+		\STATE $k\leftarrow l\leftarrow 0$
+		\STATE $p\leftarrow p_0$
+		\STATE $\tilde{\pi}\leftarrow p$
+		\STATE $steps\leftarrow 1$
+		\WHILE {$steps < k_{\omega}$}
+			\WHILE {$p\sim$ numerical simulation in $p \wedge steps < k_{\omega}$}
+				\STATE $p\leftarrow$ numerical simulation in $p$
+				\IF {numerical precission lost in $p$}
+					\STATE $l\leftarrow k$ \COMMENT{selfloop--equilibrium}
+					\RETURN $\tilde{\pi},k,l$
+				\ENDIF
+				\STATE $steps\leftarrow steps+1$
+			\ENDWHILE
+			\IF {$l\leftarrow$ cycle detected in $p$}
+				\RETURN $\tilde{\pi},k,l$ \COMMENT{limit cycle}
+			\ENDIF
+			\STATE $\tilde{\pi}\leftarrow\tilde{\pi},p$
+			\STATE $k\leftarrow k+1$ \COMMENT{new representant}
+		\ENDWHILE
+		\RETURN $\tilde{\pi},k,l$
+	\end{algorithmic}
 \end{algorithm}
 
 \subsection*{Model Checking}
@@ -586,34 +578,113 @@ The algorithm \ref{modelChecking} utilizes output of the
 \emph{Simulation} procedure and -- based on a~cycle presence -- performs
 the bounded model checking formula unfolding of $\varphi$. The unfolded
 expression is then applied to the filtered path to obtain a~true--false
-result.
+result. The input parameters are again $\varphi,p_0,k_\omega$.
 
 
 \begin{algorithm}
 	\caption{Model Checking}
 	\label{modelChecking}
-	\begin{program}
-		\keyword{require}\:(\varphi,p_0,k_\omega);
-		\BEGIN
-			(\tilde{\pi},k,l):=|\em Simulation\rm|(\varphi, p_0, k_\omega);
-			\IF l \neq 0
-			\THEN
-				\keyword{return}({}_l[[\varphi]]_k^0(\tilde{\pi})) \rcomment{cyclic}
-			\ELSE
-				\keyword{return}([[\varphi]]_k^0(\tilde{\pi})) \rcomment{acyclic}
-			\FI
-		\END
-	\end{program}
+	\begin{algorithmic}[1]
+		\STATE $(\tilde{\pi},k,l)\leftarrow$ Simulation in $\varphi, p_0, k_\omega$
+		\IF {$l \neq 0$}
+			\RETURN ${}_l[[\varphi]]_k^0$ in $\tilde{\pi}$ \COMMENT{cyclic}
+		\ELSE
+			\RETURN $[[\varphi]]_k^0$ in $\tilde{\pi}$ \COMMENT{acyclic}
+		\ENDIF
+	\end{algorithmic}
 \end{algorithm}
 
 \chapter{Method Evaluation}
+\section{Implementation Description}
+Python was choosen as the prototype implementation language and this
+decision further influenced the selection of SciPy--NumPy as the base
+for numerical simulation. In time of this writing, such a~combination
+is being widely used\cite{wiki:python}.
 
-The rounding error of point comparison of the cycle detector causes
+For the numerical method, the \emph{scipy.integrate} module was used.
+The module further utilizes a~fortran integrator implementation from
+the \textsc{lsoda} package\cite{scipy:odeint}. 
+
+As already mentioned, a~cycle detection algorithm due to Brent was
+selected.
+
+\section{Cycle Detector Performance}
+The rounding error in point comparison of the cycle detector causes
 not all the cycles being detected properly. Therefore, inaccurate trace
 and cycle lengths may be reported by the algorithm for some seeds.
 Because of this inacuraccy, it is interesting to consider detector
-performance in an experiment. Here, a~Lotka-Volterra and Bayramov
-systems of ordinary differential equations are examined\dots
+performance in an experiment. Here, Lotka-Volterra and Bayramov
+systems of ordinary differential equations are examined. Experiments
+were inspired by a~na\"{i}ve approach to initial conditions
+problem\cite{sven}.
+
+\subsection*{Lotka-Volterra Experiment design}
+The experiments consider a~set of traces starting in different seeds
+and report the trace lengths and cycle presence distribution based
+on the comparison accuracy and the setup of atomic propositions.
+
+The seeds are placed in a~rectangular grid of $100\times 100$ points
+spanning a~range $\langle 1.0, 11.0\rangle$ in both dimentsions. The
+integration takes $2000$ constant steps from the range $\langle 0.0,
+10.0\rangle$.
+
+The values reported are
+\begin{inparaenum}[\itshape a\upshape)]
+\item the maximum length of cyclic trace -- the bound $k$;
+\item the number of $k$--$l$ combinations; and
+\item the most frequent $k$--$l$ combination.
+\end{inparaenum}
+
+Here, $l$ is the start of the cycle, $k$ the total length of a~cyclic
+trace. In $k=0$ cases, no cycle was detected.
+\begin{table}[h]
+\caption{Lotka-Volterra}
+\label{tab:lv:03}
+\begin{tabular}{p{4cm}|c c c r}
+$AP$ &$max\:k$ &$|k\times l|$ &$K$--$L$ &$\varepsilon$\\
+\hline
+$x_0\in\{5.0\}$
+	&2
+	&4
+	&2--0, 7303
+	&0.3\\
+$x_0\in\{5.0\}$
+	&4
+	&9
+	&0--0, 6104
+	&0.03\\
+$x_0\in\{2.5,5.0\}$
+	&4
+	&5
+	&4--0, 7303
+	&0.3\\
+$x_0\in\langle 5.0,6.0\rangle;100\times$
+	&2
+	&9
+	&1--0, 3445
+	&0.3\\
+$x_0\in\langle 5.0,6.0\rangle, x_1\in\langle 2.0,3.0\rangle;10\times 10$
+	&16
+	&30
+	&1--0, 2758
+	&0.3\\
+\end{tabular}
+\end{table}
+
+From Table \ref{tab:lv:03}, it can be seen if $\varepsilon>grid\:step$,
+cycles are being detected prematurely. On the other hand,
+if $\varepsilon$ value is too small, the cycle detector misses most of
+the cycles in filtered traces. Therefore, care has to be taken
+when configuring experiment $\varepsilon$ value.
+
+Original experimental data can be seen in\ref{att:results}.
+
+\section{$k$--$l$ clustering}
+
+\section{Case Study}
+
+\section{Limitations}
+
 \bibliographystyle{plainnat}
 \bibliography{thesis}
 \end{document}
