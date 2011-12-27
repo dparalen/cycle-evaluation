@@ -13,8 +13,8 @@ class NameAtom(ex.NameAtom):
 	def __call__(self, data=None):
 		# data is "queried" for self.Contents and its value is returned
 		logger.debug("NameAtom: call: data: %s" % str(data))
-		if not data:
-			return data
+		if data == None:
+			return None
 		try:
 			ret = data[self.Contents]
 			logger.debug("data[%s] -> %s" % (str(self.Contents), str(ret)))
