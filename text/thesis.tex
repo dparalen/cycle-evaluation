@@ -94,8 +94,8 @@ was reached.
 
 In such a~session, the framework provides simulation traces of the
 system observed over the time specified. The simulation being rather
-straightforward, a~common integrator -- such as provided in the
-\textsc{lsode} \cite{lsode} package -- may be used.
+straightforward, a~common integrator\,--\,such as provided in the
+\textsc{lsode} \cite{lsode} package\,--\,may be used.
 An output in this case is an approximation of a~continuous trajectory
 of the dynamic system.
 
@@ -360,7 +360,7 @@ condition holds.
 \end{mydef}
 In words, two points $p_i,p_j\in\pi$ are in relation $p_i\sim p_j$ if
 they have got the same evaluation in all the atomic propositions while
-so do all the points laying ``between'' $p_i$ and $p_j$.
+so do all the points laying\,``between''\,$p_i$ and $p_j$.
 \begin{mylemma}
 Point equivalence $\sim$ is a~proper equivalence.
 \begin{proof}Given a~trace $\pi$ and points $p_i,p_j,p_k\in\pi$,
@@ -385,8 +385,8 @@ equivalence.
 			$p_i\sim p_j\wedge p_j\sim p_k$,
 			$\forall a\in AP:\bigwedge_{q\in\Omega(p_i,p_k)}a(q)
 			\iff a(p_k)$, what is a~contradiction. For other cases of
-			$i,j,k$ ordering -- by means of $\sim$~symmetry --
-			transitivity holds, too.
+			$i,j,k$ ordering\,--\,by means of
+			$\sim$~symmetry\,--\,transitivity holds, too.
 	\end{inparaenum}
 	\qedhere
 \end{proof}
@@ -411,8 +411,8 @@ $\tilde{\pi}=\tilde{p}_0,\tilde{p}_1,\dotsc$ such that
 	&(p_{k-1}\rightarrow p_{k})\wedge(p_{k-1}\not\sim p_{k})
 \end{align}
 \end{mydef}
-In words, representants are selected as the first elements -- with
-regards to the $\rightarrow$ relation -- belonging to different
+In words, representants are selected as the first elements\,--\,with
+regards to the $\rightarrow$ relation\,--\,belonging to different
 partition classes. 
 
 Naturally, the arrow notation can be adopted for filtered traces;
@@ -460,7 +460,7 @@ trace is impossible because the approaching does trigger no~change in
 atomic proposition evaluation.
 
 \subsection*{Spirals}
-Although it would be possible -- and more accurate -- to check
+Although it would be possible\,--\,and more accurate\,--\,to check
 a~trace for loop presence over a~sequence of evaluated points,
 it would not work for spiral paths.
 
@@ -477,7 +477,7 @@ from a~filtered trace
 $\epsilon(\tilde{\pi})=\epsilon(\tilde{p}_1),\epsilon(\tilde{p}_2),
 \dotsc; \epsilon(\tilde{p}_i)\in\{\top,\bot\}^4$, a~point
 $\epsilon(\tilde{p}_{\ell})$ is repeated each time the spiral crosses
-particular region until the equilibrium is reached -- see the Figure
+particular region until the equilibrium is reached\,--\,see the Figure
 \ref{spiral}. Therefore, first $\epsilon(p_{\ell})$ repetition is
 labeled as a~cycle. As this prevents the equilibrium point self-loop to
 be detected, the property $\varphi$ is verified as a~false-negative.
@@ -532,14 +532,18 @@ reported.
 In case a~limit cycle is encountered, the filtered trace is terminated
 before steps count reaches the $k_{\omega}$ limit and cycle start is
 reported in addition to the filtered trace length. Here, the memory-less
-Brent cycle detection algorithm is utilized\cite{wloop,brent}
--- only one point is needed to decide the cycle presence considering
-proper detector initialization.
+Brent cycle detection algorithm is utilized\cite{wloop,brent}\,--\,only
+one point is needed to decide the cycle presence considering proper
+detector initialization.
 
 Worth mentioning, it is assumed that if a~cycle is detected over
 filtered trace, a~cycle containing all the filtered cycle points is
 present in the original trace, too. This fact is just empirically
 confirmed here as its proof is out of scope of this thesis.
+
+As far as performance is considered, the filter takes $k_\omega|AP|$
+steps, thus it causes a~linear slow-down of the simulation with regards
+to atomic propositions count.
 
 \begin{figure}
 \label{fig:trace:kinds}
@@ -579,10 +583,11 @@ confirmed here as its proof is out of scope of this thesis.
 
 \subsection*{Model Checking}
 The algorithm \ref{modelChecking} utilizes output of the
-\emph{Simulation} procedure and -- based on a~cycle presence -- performs
-the bounded model checking formula unfolding of $\varphi$. The unfolded
-expression is then applied to the filtered path to obtain a~true--false
-result. The input parameters are again $\varphi,p_0,k_\omega$.
+\emph{Simulation} procedure and\,--\,based on a~cycle
+presence\,--\,performs the bounded model checking formula unfolding of
+$\varphi$. The unfolded expression is then applied to the filtered
+path to obtain a~true--false result. The input parameters are again
+$\varphi,p_0,k_\omega$.
 
 
 \begin{algorithm}
@@ -629,12 +634,12 @@ on the comparison accuracy and the setup of atomic propositions.
 
 The seeds are placed in a~rectangular grid of $100\times 100$ points
 spanning a~range $\langle 1.0, 11.0\rangle$ in both dimentsions. The
-integration takes 2 000 constant steps from the range $\langle 0.0,
+integration takes 2\,000 constant steps from the range $\langle 0.0,
 10.0\rangle$.
 
 The values reported are
 \begin{inparaenum}[\itshape a\upshape)]
-\item the maximum length of cyclic trace -- the bound $k$;
+\item the maximum length of cyclic trace\,--\,the bound $k$;
 \item the number of $k$--$l$ combinations; and
 \item the most frequent $k$--$l$ combination.
 \end{inparaenum}
@@ -690,18 +695,18 @@ Original experimental data can be seen in\ref{att:results}.
 In this experiment, the effect of $\varepsilon$ setting is examined. In
 addition to Brent cycle detector, a~detector due to Dra\v{z}an
 \cite{sven} is examined. The later detector works by checking last $e$
-extremes for their repetition and -- as far as this experiment is
-considered -- it is more succesful.
+extremes for their repetition and\,--\,as far as this experiment is
+considered\,--\,it is more succesful.
 
-The Byramov\cite{bayramov} \textsc{ode} system as used in Dra\v{z}an's
-evaluation is utilized here, too. This time, the $216$ seeds are located
-in a~rectangular \textsc{3d} grid in
+The Byramov \textsc{ode} system as used in Dra\v{z}an's evaluation is
+utilized here, too. This time, the $216$ seeds are located in
+a~rectangular \textsc{3d} grid in
 $\langle 0.0015,0.0045\rangle\times\langle 0.00095,0.00665
 \rangle\times\langle 0.0038,0.0494\rangle$.
 However, only the $\varepsilon$
 effect to the number of various $k$--$l$ combinations is reported.
 The sole atomic proposition is $x_1=0.001$ and the integration takes
-$9600$ steps from the range $\langle 0.0,960\rangle$.
+9\,600 steps from the range $\langle 0.0,960\rangle$.
 \begin{table}[h]
 \label{tab:by}
 \begin{tabular}{l | c r}
@@ -732,7 +737,7 @@ $\varphi\equiv\bF(x_0>5.5\wedge x_1>1.0)$ validity. Unlike the formula
 used in Dra\v{z}an's thesis, $\varphi$ is a~reachability property used
 only for a~demonstration purpose.
 
-Here, 9 seeds are placed in a~rectangular grid spanning a~``plane"
+Here, 9 seeds are placed in a~rectangular grid spanning a~``plane''
 $\langle0,6\rangle\times\langle0,6\rangle$.
 
 The result of the experiment is depicted in Figure \ref{fig:wh};
@@ -757,7 +762,7 @@ holds. Red squares depict seeds for which a~cycle is detected but the
 $\varphi$ formula doesn't hold. Red dots again represent filtered trace
 points.
 
-Due to accuracy of the integrator, 8 000 numerical method
+Due to accuracy of the integrator, 4\,000 numerical method
 steps are taken to make the most of the seeds green and only the most
 inner circle is a~true-negative. 
 
@@ -774,19 +779,40 @@ A~close-up of the situation can be seen in Figure \ref{fig:lv:close}.
 \center
 \includegraphics[scale=0.31,draft=false]{lv_oscillation_closeup}
 \label{fig:lv:close}
-\caption{Oscillation on Lotka-Volterra Equations -- Close-up}
+\caption{Oscillation on Lotka-Volterra Equations\,--\,Close-up}
 \end{figure}
 
-\section{Future Work}
-\subsection*{Implementation Limitations}
+\section{Performance}
+If a~lasso-shaped or acyclic trace is considered, the number of steps
+this method\,--\,including filtering and cycle detection\,--\,takes is
+bound by $O(|AP|^2)$\cite{biere}.
+
+When filtered, spiral traces after cycle detection of equilibrium point
+contain $O(|AP|^d)$ elements, $d$ being the count of dimensions atomic
+propositions refer to. This is because, unlike the loop, a~spiral trace
+penetrates into the constraints grid while converging to the equilibrium
+point rather than encounter only the circumference constraints.
+Therefore, the bound $k$ is of the same size. Together with the
+subformula sharing, which is of quadratic complexity with regard to $k$,
+the amount of steps for a~spiral trace is $O(|AP|^{2d})$ for the whole
+method.
+
+Altogether for deterministic system traces, the method takes only
+polynomial amount of steps with regards to the atomic propositions
+count as far as single trace is concerned.
+
+\chapter{Future Work}
+\section{Current Limitations}
 Currently, the prototype has got following limitations:
 \begin{inparaenum}[\itshape a\upshape)]
 \item $\bU$ and $\bR$ operators are not implemented for cyclic model
 	checking;
 \item no paralellization for the model checking part is implemented;
-\item experiments have got hard-coded setting;
+\item experiments have got hard-coded settings;
 \item custom-made partial derivations of each equation have to be
 	provided for a~system to integrate;
+\item the filtering doesn't yet work simultaneously with the numerical
+	method;
 \item poor accuracy integrator used;
 \item no user interface; and
 \item no native model description language support, such as
@@ -796,10 +822,40 @@ Currently, the prototype has got following limitations:
 Removing these, a~more usable tool for analyzing the initial conditions
 problem\cite{sven} or even for a~Monte Carlo based system robustness
 analysis\cite{rizk} could be obtained.
- 
-\subsection*{Performance Analysis}
-Since the are no performance measures taken from the experiments, 
 
+\section{CUDA GPU Acceleration}
+As imposed by the Algorithm \ref{simulationCycleDetectFilter}, the
+filtering and cycle detection should cooperate together with the
+numerical method. Therefore, an experimental \textsc{gpu} implementation
+was started by the author\cite{me:cuda}. The project is based in
+Papou\v{s}ek's thesis\cite{papousek} where a~numerical \textsc{gpu}
+integration method is described. Papou\v{s}ek selected an approach of
+one thread executing the integration algorithm for one dimension as this
+assignment utilizes the \textsc{gpu} resources reasonably
+well\cite{papousek}.
+
+The same approach was selected by the author in \cite{me:cuda}; in the
+filter, each trace examines the validity of an atomic proposition of
+particular dimension. This happens after each\,``valid''\,numerical
+method step and requires thread result synchronization for all the
+computed point dimensions. Similarly, the cycle detection operates each
+thread of a~warp comparing one dimension value of two points being
+examined. Thus the filtering and cycle detection seem suitable for
+a~straightforward \textsc{gpu} parallelization.
+
+However, the formula translation of the bounded model checking is
+recursive and recursive functions are limited by some \textsc{cuda}
+\textsc{api} versions\cite{cuda:relnotes}. Further limiting factor is
+the need of subformula sharing during the translation process which
+requires non-sequential memory access for a~hashing function to perform
+optimally. Therefore, the Algorithm \ref{modelChecking} could be more
+challenging task to implement on a~\textsc{gpu}.
+
+Still, even if only the Algorithm \ref{simulationCycleDetectFilter}
+is accelerated on \textsc{gpu}, the Algorithm \ref{modelChecking}
+could be easily parallelized on \textsc{cpu} consumming output of the
+filtered simulation effectively as it, too, doesn't require
+synchronization amongst particular trace evaluations.
 
 \bibliographystyle{plainnat}
 \bibliography{thesis}
