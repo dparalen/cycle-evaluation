@@ -97,7 +97,7 @@ evaluation of the prototype over selected models.
 
 \chapter{Background}
 Considering the model checking and simulation topics, this section
-introduces necessary concepts utilized troughout the text.
+introduces necessary concepts utilized throughout the text.
 
 \section{Trace}
 Here, a~trace $\pi$ represents result of either a~dynamic system
@@ -111,7 +111,7 @@ Let $n\in\mNatural$ be the number of state variables $x_i$ of a~system,
 then:
 \begin{inparaenum}[\upshape a\itshape)]
 \item a~sequence $\pi=p_0,p_1,\dotsc$ of tuples
-$p_i\equiv(x_1,x_2,\dotsc,x_n)\in~\mReal_{+}^n$ is caled trace;
+$p_i\equiv(x_1,x_2,\dotsc,x_n)\in~\mReal_{+}^n$ is called trace;
 \item single element $p_i=\pi(i)$ of a~trace $\pi$ is called point;
 \item the first point in a~trace $p_0=\pi(0)$ is called seed;
 \item a suffix of points $p_i,p_{i+1},\dotsc$ of a~trace is
@@ -125,21 +125,21 @@ As far as dynamic systems are concerned, their evolution approximation
 obtained as a~result of a~numerical method is always \emph{discrete and
 finite}. The same holds for sampled real-life population models.
 Moreover, these systems being deterministic\cite{sven}, only
-deterministic models are considered troughout the text.
+deterministic models are considered throughout the text.
 
 \section{Trace Properties}
 Real-life deterministic system traces may be either \emph{divergent} or
 \emph{convergent}. In~the convergent case, two situations are possible;
 a~point \emph{equilibrium} and a~\emph{limit cycle}. As far as the
 equilibrium point is considered, a~system may reach it either
-asymptotically or sliding downwards a~spiral. Similarily, the limit
+asymptotically or sliding downwards a~spiral. Similarly, the limit
 cycle too behaves as an \emph{attractor}. These situations are depicted
 in Figure \ref{fig:trace:kinds}.
 
 From the qualitative point of view, convergent traces express
 \emph{liveness} and \emph{reachability} properties whereas
 divergent traces allow only reachability properties to emerge.
-To name some representants of these wider quality classes,
+To name some members of these wider quality classes,
 attractors and  \emph{invariance} are examples of liveness
 properties whereas \emph{inevitability} and \emph{response} represent
 the reachability class\cite{rizk}. What these have in common is they
@@ -174,7 +174,7 @@ the point. To denote the evaluation, an evaluation function is
 introduced.
 \begin{mydef}[Evaluation Function]
 A~function $\epsilon$ assigning either true or false values to
-all atomic propostions evaluated over all state variables of a~trace
+all atomic propositions evaluated over all state variables of a~trace
 point $p;\epsilon(p)=e;e\in\{\top,\bot\}^m; \epsilon:\mReal_{+}^n
 \rightarrow\{\top,\bot\}^m;m=|AP|$ is called evaluation.
 \end{mydef}
@@ -232,7 +232,7 @@ at least one path with $\rho_M(0)~\in~S_0$\cite{biere}.
 
 Determining whether an \ltl formula $\varphi$ is existentially (resp.
 universally) valid in a~given Kripke structure is called an
-\emph{existential} (resp. an \emph{universal}) \emph{model checking}
+\emph{existential} (resp. a~\emph{universal}) \emph{model checking}
 problem\cite{biere}.
 
 This thesis aims to use a~trace as a~Kripke structure path to be able
@@ -242,8 +242,8 @@ equivalent to the universal as far as a~trace is considered.
 In text therefore only the term model checking is used.
 
 Although originally\cite{biere} the bounded model checking method was
-designed to utililze \textsc{sat} solvers to verify hardware design,
-here, the structure of the resulting unfolded \ltl formula is utlilized.
+designed to utilize \textsc{sat} solvers to verify hardware design,
+here, the structure of the resulting unfolded \ltl formula is utilized.
 
 The unfolded formula comprising finite number of terms combined with
 propositional logic operators may be directly validated over a~sequence
@@ -262,7 +262,7 @@ limit $k=2^{|AP|}$ of the counterexample length\cite{biere}. However, in
 special case of a~\emph{lasso-shaped} path, a~smaller bound $k={|AP|}^2$
 exists\cite{biere}.
 
-As far as the semantics is considered, boudned model checking
+As far as the semantics is considered, bounded model checking
 distinguishes between cyclic and acyclic paths. Therefore, the $k$-loop
 definition follows.
 \begin{mydef}[K-Loop]
@@ -281,7 +281,7 @@ false as only finite trace prefix is considered.
 
 As far as the unfolding--translation is considered, only the cyclic part
 is introduced here for the sake of brevity.
-Both the cylic translation and $k$-loop definitions are due to Biere
+Both the cyclic translation and $k$-loop definitions are due to Biere
 et al.
 \begin{mydef}[Successor in a~Loop]
 Let $k,l,i\in\mNatural_0$, with $l,i \leq k$. The successor $succ(i)$ is
@@ -319,7 +319,7 @@ of $\varphi$
 		{}_l[[\psi]]_k^n\wedge\bigwedge_{n=i}^j{}_l[[\psi]]k_n\right)
 \end{align} 
 \end{mydef}
-However, the definition being recursive, it is very unefficient to
+However, the definition being recursive, it is very inefficient to
 apply the $[[\cdot]]_k^i$ operator every time as the procedure would
 make exponentially many operations with regard to $k$ in that case.
 Instead, one has to utilize sub-formula sharing to improve the
@@ -327,7 +327,7 @@ performance to a~polynomial time when implementing\cite{biere}. In next
 chapter, a~method is introduced describing how to utilize the bounded
 model checking approach for real-life system traces verification.
 
-\chapter{Metodology}
+\chapter{Methodology}
 \section{Filter}
 Considering numerical simulation, the amount of points
 generated is rather big as the goal is to approach the continuous ideal
@@ -338,7 +338,7 @@ are irrelevant as they do not change
 property validity. These points are said to be the stuttering of the
 trace\cite{lamport} and if removed, the size of the resulting trace
 is relaxed. For that purpose, the $\sim$ relation grouping equivalent
-poitns and the filtered trace definition are introduced.
+points and the filtered trace definition are introduced.
 
 \begin{mydef}[Point Equivalence]
 Points $p_i,p_j\in\pi$ are equivalent in $\sim$ if and only if following
@@ -360,7 +360,7 @@ so do all the points laying\,``between''\,$p_i$ and $p_j$.
 \begin{mylemma}
 Point equivalence $\sim$ is a~proper equivalence.
 \begin{proof}Given a~trace $\pi$ and points $p_i,p_j,p_k\in\pi$,
-following properties of $\sim$ are fulfiled rendering it a~proper
+following properties of $\sim$ are fulfilled rendering it a~proper
 equivalence.
 	\begin{inparaenum}
 		\item{Reflexivity.} As $\Omega(p_i,p_i)=\{p_i\}$,
@@ -388,16 +388,16 @@ equivalence.
 \end{proof}
 \end{mylemma}
 As a~consequence, $\sim$~partitions a~trace $\pi$ into
-(infinitelly many) classes reducing the number of points
+(infinitely many) classes reducing the number of points
 having the same evaluation.
 
-Selecting only the representants of particular classes, one is able to
+Selecting only the representatives of particular classes, one is able to
 forget other class points for the purpose of propositions validity
 checking as they do not change it. Following definition therefore
 introduces the notion of a~filtered trace.
 \begin{mydef}[Filtered Trace] Let $\pi=p_0,p_1,\dotsc$ be a~trace.
 A~filtered trace $\tilde{\pi}$ is a~sequence of partition
-$\pi/_{\sim}$ classes representants
+$\pi/_{\sim}$ classes representatives
 $\tilde{\pi}=\tilde{p}_0,\tilde{p}_1,\dotsc$ such that
 \begin{align}
 \tilde{p}_{0}=&p_0\\
@@ -407,7 +407,7 @@ $\tilde{\pi}=\tilde{p}_0,\tilde{p}_1,\dotsc$ such that
 	&(p_{k-1}\rightarrow p_{k})\wedge(p_{k-1}\not\sim p_{k})
 \end{align}
 \end{mydef}
-In words, representants are selected as the first elements\,--\,with
+In words, representatives are selected as the first elements\,--\,with
 regards to the $\rightarrow$ relation\,--\,belonging to different
 partition classes. 
 
@@ -416,7 +416,7 @@ the relation $\tilde{p}_{i-1}$ is a~predecessor of $\tilde{p}_{i}$ can
 be denoted $\tilde{p}_{i-1}\rightarrow\tilde{p}_{i}$ as well. The usual
 notation $\tilde{\pi}(i),\tilde{\pi}^i$ applies here as well.
 
-Although any class representant could be chosen, the first is chosen
+Although any class representatives could be chosen, the first is chosen
 deliberately for the forthcoming cycle detection to have biggest chance
 to detect a~cycle over a~filtered trace.
 
@@ -428,14 +428,14 @@ considered a~Kripke structure path with the labeling function
 $\epsilon$.
 
 Considering a~numerical simulation timeout and the filtering,
-divergent trace properties are dealed with as the timeout and filter
+divergent trace properties are dealt with as the timeout and filter
 ensure a~finite and discrete trace suitable for divergent properties
 model checking. Moreover, the length of this trace is a~reasonable bound
 for the bounded model checking method\cite{biere}.
 
 However, convergent trace properties need further care before a~trace
 may be checked for their validity. In particular, both the equilibrium
-point and limit cycle require the trace to be checkded for a~$k$-loop
+point and limit cycle require the trace to be checked for a~$k$-loop
 presence for a~convergent property to be validated. Moreover, the length
 of the $k$-loop, too, is a~reasonable bound for the bounded model
 checking\cite{biere}.
@@ -450,7 +450,7 @@ but Brent algorithm\cite{wloop,brent} has been adopted here.
 A~self-loop in a~trace resulting from the numerical simulation precision
 being lost in an equilibrium point requires special handling. In this
 case, the cycle detector has to cooperate with the numerical method such
-that the lost of precision related to approaching the equlibrium is
+that the lost of precision related to approaching the equilibrium is
 reported as a~self-loop. Otherwise, detecting a~self-loop on filtered
 trace is impossible because the approaching does trigger no~change in
 atomic proposition evaluation.
@@ -460,8 +460,8 @@ Although it would be possible\,--\,and more accurate\,--\,to check
 a~trace for loop presence over a~sequence of evaluated points,
 it would not work for spiral paths.
 
-As an example situation, condsider
-a~\textsc{2d}~spiral trace which has an equilibirium point in $x',y'$
+As an example situation, consider
+a~\textsc{2d}~spiral trace which has an equilibrium point in $x',y'$
 and an \ltl property
 $\varphi\equiv\bF((x\ge x'-\epsilon_x)\wedge(x\le x'+\epsilon_x))\wedge
 \bF((y\ge y'-\epsilon_y)\wedge(y\le y'+\epsilon_y))$ checking this
@@ -517,12 +517,12 @@ the numerical method, cycle detector and filter. The input parameters are:
 To simulate particular system, custom numerical method is utilized.
 Trace points are generated until the integration performs $k_{\omega}$
 steps. In each step, their presence in a~single $\sim$ partition class
-is checked. If the class changes, new representant is identified
+is checked. If the class changes, new representative is identified
 and is appended to the filtered trace.
 
 As an equilibrium may be encountered only while points remain within
 a~single class, the equilibrium property is checked in each numeric
-method step. The integration precission lost is considered a~point
+method step. The integration precision lost is considered a~point
 equilibrium case. In that event, a~self-loop on the last point is
 reported.
 
@@ -562,8 +562,8 @@ to atomic propositions count.
 		\WHILE {$steps < k_{\omega}$}
 			\WHILE {$p\sim$ numerical simulation in $p \wedge steps < k_{\omega}$}
 				\STATE $p\leftarrow$ numerical simulation in $p$
-				\IF {numerical precission lost in $p$}
-					\STATE $l\leftarrow k$ \COMMENT{selfloop--equilibrium}
+				\IF {numerical precision lost in $p$}
+					\STATE $l\leftarrow k$ \COMMENT{self-loop--equilibrium}
 					\RETURN $\tilde{\pi},k,l$
 				\ENDIF
 				\STATE $steps\leftarrow steps+1$
@@ -572,7 +572,7 @@ to atomic propositions count.
 				\RETURN $\tilde{\pi},k,l$ \COMMENT{limit cycle}
 			\ENDIF
 			\STATE $\tilde{\pi}\leftarrow\tilde{\pi},p$
-			\STATE $k\leftarrow k+1$ \COMMENT{new representant}
+			\STATE $k\leftarrow k+1$ \COMMENT{new representative}
 		\ENDWHILE
 		\RETURN $\tilde{\pi},k,l$
 	\end{algorithmic}
@@ -618,10 +618,10 @@ selected.
 The rounding error in point comparison of the cycle detector causes
 not all the cycles being detected properly. Therefore, inaccurate trace
 and cycle lengths may be reported by the algorithm for some seeds.
-Because of this inacuraccy, it is interesting to consider detector
+Because of this inaccuracy, it is interesting to consider detector
 performance in an experiment. Here, Lotka-Volterra, Bayramov and Wilhelm
 systems of ordinary differential equations are examined. Experiments
-were inspired by a~na\"{i}ve approach to initial conditions
+were inspired by a~naive approach to initial conditions
 problem\cite{sven}.
 
 \subsection*{Lotka-Volterra Experiment Design}
@@ -693,7 +693,7 @@ In this experiment, the effect of $\varepsilon$ setting is examined. In
 addition to Brent cycle detector, a~detector due to Dra\v{z}an
 \cite{sven} is examined. The later detector works by checking last $e$
 extremes for their repetition and\,--\,as far as this experiment is
-considered\,--\,it is more succesful.
+considered\,--\,it is more successful.
 
 The Byramov \textsc{ode} system as used in Dra\v{z}an's evaluation is
 utilized here, too. This time, the $216$ seeds are located in
@@ -723,7 +723,7 @@ $\varepsilon\rightarrow\infty$, every first two points of a~trace are
 equal and a~cycle is always detected resulting in one combination,
 whereas if $\varepsilon\rightarrow0$ no match is possible ever and no
 cycles are detected resulting again in one combination. Of course, if
-the rounding error is concerned, the situation most likelly does not
+the rounding error is concerned, the situation most likely does not
 match this ideal case.
 
 \section{Case Study}
@@ -740,7 +740,7 @@ $\langle0,6\rangle\times\langle0,6\rangle$.
 The result of the experiment is depicted in Figure \ref{fig:wh};
 seeds are marked as squares and filtered trace points are marked
 as red dots. Seeds have either green or red color depending whether
-a~trace rooted in particular seed fulfils the formula $\varphi$.
+a~trace rooted in particular seed fulfills the formula $\varphi$.
 Only traces of red seeds are depicted.
 \begin{figure}[h]
 \center
@@ -756,7 +756,7 @@ for which no cycle is detected. Green squares are seeds for which
 an oscillation formula
 $\varphi\equiv\bG((a\implies\bF(\neg a))\wedge(\neg a\implies\bF(a)))$
 holds. Red squares depict seeds for which a~cycle is detected but the
-$\varphi$ formula doesn't hold. Red dots again represent filtered trace
+$\varphi$ formula does not hold. Red dots again represent filtered trace
 points.
 
 Due to accuracy of the integrator, 4\,000 numerical method
@@ -790,7 +790,7 @@ propositions refer to. This is because, unlike the loop, a~spiral trace
 penetrates into the constraints grid while converging to the equilibrium
 point rather than encounter only the circumference constraints.
 Therefore, the bound $k$ is of the same size. Together with the
-subformula sharing, which is of quadratic complexity with regard to $k$,
+sub-formula sharing, which is of quadratic complexity with regard to $k$,
 the amount of steps for a~spiral trace is $O(|AP|^{2d})$ for the whole
 method.
 
@@ -804,11 +804,11 @@ Currently, the prototype has got following limitations:
 \begin{inparaenum}[\itshape a\upshape)]
 \item $\bU$ and $\bR$ operators are not implemented for cyclic model
 	checking;
-\item no paralellization for the model checking part is implemented;
+\item no parallelization for the model checking part is implemented;
 \item experiments have got hard-coded settings;
 \item custom-made partial derivations of each equation have to be
 	provided for a~system to integrate;
-\item the filtering doesn't yet work simultaneously with the numerical
+\item the filtering does not yet work simultaneously with the numerical
 	method;
 \item poor accuracy integrator used;
 \item no user interface; and
@@ -843,15 +843,15 @@ a~straightforward \textsc{gpu} parallelization.
 However, the formula translation of the bounded model checking is
 recursive and recursive functions are limited by some \textsc{cuda}
 \textsc{api} versions\cite{cuda:relnotes}. Further limiting factor is
-the need of subformula sharing during the translation process which
+the need of sub-formula sharing during the translation process which
 requires non-sequential memory access for a~hashing function to perform
 optimally. Therefore, the Algorithm \ref{modelChecking} could be more
 challenging task to implement on a~\textsc{gpu}.
 
 Still, even if only the Algorithm \ref{simulationCycleDetectFilter}
 is accelerated on \textsc{gpu}, the Algorithm \ref{modelChecking}
-could be easily parallelized on \textsc{cpu} consumming output of the
-filtered simulation effectively as it, too, doesn't require
+could be easily parallelized on \textsc{cpu} consuming output of the
+filtered simulation effectively as it, too, does not require
 synchronization amongst particular trace evaluations.
 
 \bibliographystyle{plainnat}
