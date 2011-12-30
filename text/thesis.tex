@@ -15,6 +15,7 @@
 \usepackage{algorithmic}
 \usepackage[numbers]{natbib}
 \usepackage{graphicx}
+\usepackage[final]{pdfpages}
 %
 %\DeclareGraphicsExtensions{.pdf,.png,.jpg}
 %
@@ -53,21 +54,29 @@
 \thesisfaculty{fi}
 \thesisyear{Fall 2011}
 \thesislang{en}
-\thesisadvisor{David \v{S}afr\'{a}nek}
+\thesisadvisor{RNDr.\,David \v{S}afr\'{a}nek,\,Ph.D.}
 %
-\input{transfig}
+%\input{transfig}
 
 \begin{document}
 \FrontMatter
 \ThesisTitlePage
-
+\includepdf[openright=true]{AssignmentA.pdf}
+\includepdf{AssignmentB.pdf}
+\cleardoublepage
 \begin{ThesisDeclaration}
 \DeclarationText
 \AdvisorName
 \end{ThesisDeclaration}
 
-%\begin{ThesisThanks}
-%\end{ThesisThanks}
+\begin{ThesisThanks}
+Author would like to thank his advisor \emph{David \v{S}afr\'{a}nek} for
+countless hours of his time spent consulting and reviewing this work.
+Equally importantly, author is grateful to his fianc\'{e}e \emph{Leona} for
+her loving support and patience.
+
+Thank you!
+\end{ThesisThanks}
 
 \begin{ThesisAbstract}
 This thesis targets model checking of properties expressed as linear
@@ -79,7 +88,7 @@ behind is analysis of experimental or simulation data considering
 large-scale biological systems.
 The output is a~prototype implementation of the introduced method
 evaluated for reachability and an oscillation properties over custom
-system traces. 
+system traces.
 \end{ThesisAbstract}
 
 \begin{ThesisKeyWords}
@@ -89,11 +98,16 @@ Trace, Linear Temporal Logic, Bounded Model Checking, Filtering
 \MainMatter
 \tableofcontents
 \chapter{Introduction}
-Nothing in here, yet\,\dots
+Lately, systems biology research gained significant momentum. The field of
+study being complex systems properties discovery and modeling, tools
+analyzing property validity of biological systems are required. This
+thesis introduces a~prototype of such a~tool, different from the rest
+by utilizing bounded model checking and filtering to cope with the task.
+Being focused on the deterministic nature of population kinetics models, the
+prototype performance remains reasonable even for larger model checking problems.
 
-The structure of the thesis is theoretical background of the problem
-followed by solution design with focus on algorithm and ended by
-evaluation of the prototype over selected models.
+The structure of the thesis is theoretical background of the system analysis
+followed by solution design and ended by evaluation of the prototype.
 
 \chapter{Background}
 Considering the model checking and simulation topics, this section
@@ -103,14 +117,14 @@ introduces necessary concepts utilized throughout the text.
 Here, a~trace $\pi$ represents result of either a~dynamic system
 evolution over a~range of time\cite{sven,pospisil} approximated by
 a~numeric method or a~result of any other kind of experiment.
-Both sources describing values of concentrations of $n$ state variables,
-the domain considered is~$\mReal_{+}^n$.
+Both these sources describing values of concentrations of $n$ state
+variables, the value domain considered is~$\mReal_{+}^n$.
 
 \begin{mydef}[Trace]
 Let $n\in\mNatural$ be the number of state variables $x_i$ of a~system,
 then:
 \begin{inparaenum}[\upshape a\itshape)]
-\item a~sequence $\pi=p_0,p_1,\dotsc$ of tuples
+\item a~sequence $\pi=p_0,p_1,\dotsc$ consisting of tuples
 $p_i\equiv(x_1,x_2,\dotsc,x_n)\in~\mReal_{+}^n$ is called trace;
 \item single element $p_i=\pi(i)$ of a~trace $\pi$ is called point;
 \item the first point in a~trace $p_0=\pi(0)$ is called seed;
@@ -139,7 +153,7 @@ in Figure \ref{fig:trace:kinds}.
 From the qualitative point of view, convergent traces express
 \emph{liveness} and \emph{reachability} properties whereas
 divergent traces allow only reachability properties to emerge.
-To name some members of these wider quality classes,
+To name some representatives of these wider quality classes,
 attractors and  \emph{invariance} are examples of liveness
 properties whereas \emph{inevitability} and \emph{response} represent
 the reachability class\cite{rizk}. What these have in common is they
@@ -417,7 +431,7 @@ be denoted $\tilde{p}_{i-1}\rightarrow\tilde{p}_{i}$ as well. The usual
 notation $\tilde{\pi}(i),\tilde{\pi}^i$ applies here as well.
 
 Although any class representatives could be chosen, the first is chosen
-deliberately for the forthcoming cycle detection to have biggest chance
+deliberately for the forthcoming cycle detection to have bigger chance
 to detect a~cycle over a~filtered trace.
 
 As far as the amount of classes generated is concerned, worst case is
@@ -429,9 +443,9 @@ $\epsilon$.
 
 Considering a~numerical simulation timeout and the filtering,
 divergent trace properties are dealt with as the timeout and filter
-ensure a~finite and discrete trace suitable for divergent properties
-model checking. Moreover, the length of this trace is a~reasonable bound
-for the bounded model checking method\cite{biere}.
+ensure a~finite and discrete trace suitable for model checking. Moreover,
+the length of this trace is a~reasonable bound for the bounded model
+checking method\cite{biere}.
 
 However, convergent trace properties need further care before a~trace
 may be checked for their validity. In particular, both the equilibrium
@@ -739,7 +753,7 @@ $\langle0,6\rangle\times\langle0,6\rangle$.
 
 The result of the experiment is depicted in Figure \ref{fig:wh};
 seeds are marked as squares and filtered trace points are marked
-as red dots. Seeds have either green or red color depending whether
+as red dots. Seeds have green or red color depending whether
 a~trace rooted in particular seed fulfills the formula $\varphi$.
 Only traces of red seeds are depicted.
 \begin{figure}[h]
@@ -837,7 +851,7 @@ particular dimension. This happens after each\,``valid''\,numerical
 method step and requires thread result synchronization for all the
 computed point dimensions. Similarly, the cycle detection operates each
 thread of a~warp comparing one dimension value of two points being
-examined. Thus the filtering and cycle detection seem suitable for
+examined. Thus the filtering and cycle detection are suitable for
 a~straightforward \textsc{gpu} parallelization.
 
 However, the formula translation of the bounded model checking is
@@ -853,6 +867,48 @@ is accelerated on \textsc{gpu}, the Algorithm \ref{modelChecking}
 could be easily parallelized on \textsc{cpu} consuming output of the
 filtered simulation effectively as it, too, does not require
 synchronization amongst particular trace evaluations.
+
+\chapter{Conclusion}
+A prototype was created providing effective \ltl formula verification
+for discrete time series of non-linear ordinary differential equation
+systems or experimental data describing domain of population kinetics
+of biological systems. Within the prototype, parts suitable for
+\textsc{gpu} acceleration were identified, too.
+
+The bounded model checking due to Biere et al.\,was utilized and
+together with a~filtering method introduced here relaxed the computational
+complexity of the model checking for these systems.
+
+There remains not much to add now expect that the author sincerely hopes
+there are readers for whom this work is useful.
+
+\appendix
+\chapter{Prototype Description}
+The prototype is divided into python module files containing related classes.
+For example, classes relevant for abstract expression manipulation are stored
+in module \emph{ExpressionStructure}. In similar fashion, the rest of the
+prototype is organized.
+
+Each module has got a~short self-test section, thus if run, basic
+functionality is checked.
+
+\emph{Lotka-Volterra, Bayramov and Wilhelm} modules contain simulators of
+particular dynamic systems. \emph{Brent and Sven} contain cycle detector
+classes and \emph{Evaluation} modules provide cycle detection evaluation, when
+run.
+
+The \emph{Check}- modules provide property verification for particular system.
+These are the reachability test of a~Wilhelm system in \emph{Check\_WH} and
+oscillation over a~Lotka-Volterra system in \emph{Check\_LV} module.
+
+The prototype was implemented and tested on a~\emph{Scientific Linux 6.1} and
+a~\emph{Mac\,OS\,X~Snow\,Leopard} system in the
+\emph{Enthought Python Distribution Free 7.2-1}.
+
+The prototype utilizes \emph{Sci-Py} and \emph{NumPy} modules for graphical
+representation, numerical integration and data storage.
+
+
 
 \bibliographystyle{plainnat}
 \bibliography{thesis}
