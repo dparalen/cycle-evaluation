@@ -56,8 +56,8 @@
 \thesisadvisor{David \v{S}afr\'{a}nek}
 %
 \input{transfig}
-\begin{document}
 
+\begin{document}
 \FrontMatter
 \ThesisTitlePage
 
@@ -69,35 +69,31 @@
 %\begin{ThesisThanks}
 %\end{ThesisThanks}
 
-%\begin{ThesisAbstract}
-%\end{ThesisAbstract}
+\begin{ThesisAbstract}
+This thesis targets model checking of properties expressed as linear
+temporal logic formulae over a~dynamical system trace. A filter-based
+approach is introduced that\,--\,with the help of bounded model
+checking\,--\,relaxes computational complexity of the problem by
+exploiting the deterministic nature of these systems. The motivation
+behind is analysis of experimental or simulation data considering
+large-scale biological systems.
+The output is a~prototype implementation of the introduced method
+evaluated for reachability and an oscillation properties over custom
+system traces. 
+\end{ThesisAbstract}
 
-%\begin{ThesisKeyWords}
-%\end{ThesisKeyWords}
+\begin{ThesisKeyWords}
+Trace, Linear Temporal Logic, Bounded Model Checking, Filtering
+\end{ThesisKeyWords}
 
 \MainMatter
 \tableofcontents
 \chapter{Introduction}
-%\section{Framework Description}
-The framework main task is to select traces starting at the seeds of
-initial conditions that fulfil given \ltl specification over the time
-period provided. Therefore two main components are identified:
-\em simulation and model checking\rm{}.
-In the framework, the output of the simulation is processed by the
-model checking component to verify the LTL formula validity of
-a particular trace. Having verified all traces of the initial conditions
-set, the framework marks the seeds fulfiling the formula to provide
-the user with an output. User then could refine her initial conditions
-specification for further system evaluation. In this fashion, the user
-might iterate till a~subjective satisfaction with the system evaluation
-was reached.
+Nothing in here, yet\,\dots
 
-In such a~session, the framework provides simulation traces of the
-system observed over the time specified. The simulation being rather
-straightforward, a~common integrator\,--\,such as provided in the
-\textsc{lsode} \cite{lsode} package\,--\,may be used.
-An output in this case is an approximation of a~continuous trajectory
-of the dynamic system.
+The structure of the thesis is theoretical background of the problem
+followed by solution design with focus on algorithm and ended by
+evaluation of the prototype over selected models.
 
 \chapter{Background}
 Considering the model checking and simulation topics, this section
@@ -482,6 +478,7 @@ particular region until the equilibrium is reached\,--\,see the Figure
 labeled as a~cycle. As this prevents the equilibrium point self-loop to
 be detected, the property $\varphi$ is verified as a~false-negative.
 \begin{figure}
+\center
 \input{spiral}
 \caption{Spiral Equilibrium Property}
 \label{spiral}
