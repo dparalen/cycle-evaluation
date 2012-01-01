@@ -116,7 +116,7 @@ introduces necessary concepts utilized throughout the text.
 \section{Trace}
 Here, a~trace $\pi$ represents result of either a~dynamic system
 evolution over a~range of time\cite{sven,pospisil} approximated by
-a~numeric method or a~result of any other kind of experiment.
+a~numerical method or a~result of any other kind of experiment.
 Both these sources describing values of concentrations of $n$ state
 variables, the value domain considered is~$\mReal_{+}^n$.
 
@@ -135,7 +135,7 @@ denoted~$p_i\rightarrow p_{i+1}$.
 \end{inparaenum}
 \end{mydef}
 
-As far as dynamic systems are concerned, their evolution approximation
+As far as dynamical system traces are concerned, their evolution approximation
 obtained as a~result of a~numerical method is always \emph{discrete and
 finite}. The same holds for sampled real-life population models.
 Moreover, these systems being deterministic\cite{sven}, only
@@ -147,7 +147,7 @@ Real-life deterministic system traces may be either \emph{divergent} or
 a~point \emph{equilibrium} and a~\emph{limit cycle}. As far as the
 equilibrium point is considered, a~system may reach it either
 asymptotically or sliding downwards a~spiral. Similarly, the limit
-cycle too behaves as an \emph{attractor}. These situations are depicted
+cycle may, too, behave as an \emph{attractor}. These situations are depicted
 in Figure \ref{fig:trace:kinds}.
 
 From the qualitative point of view, convergent traces express
@@ -165,7 +165,7 @@ A~Kripke structure is a~common way of modeling a~system for the purpose
 of property validation\cite{clarke}.
 \begin{mydef}[Kripke Structure]
 Let ${AP}$ be a set of atomic propositions.
-A~Kripke structure\cite{clarke} $M$ over $AP$ is a~tuple
+A~Kripke structure $M$ over $AP$ is a~tuple
 $M=(S, S_0, R, L)$ where
 \begin{inparaenum}[\upshape a\itshape)]
 	\item{}$S$ is~a finite set of states;
@@ -178,7 +178,7 @@ $M=(S, S_0, R, L)$ where
 In the text, real-constraint atomic propositions are considered.
 An example of such a~constraint could be
 $a\in AP;a\equiv x_i \geq c;c\in\mReal_{+}$, where $x_i$ represents
-a~state variable value.
+a~system state variable value.
 
 An atomic proposition may be \emph{evaluated}
 over a~state variable property with a~boolean result. For particular
@@ -190,7 +190,7 @@ introduced.
 A~function $\epsilon$ assigning either true or false values to
 all atomic propositions evaluated over all state variables of a~trace
 point $p;\epsilon(p)=e;e\in\{\top,\bot\}^m; \epsilon:\mReal_{+}^n
-\rightarrow\{\top,\bot\}^m;m=|AP|$ is called evaluation.
+\rightarrow\{\top,\bot\}^m;m=|AP|$ is called evaluation function.
 \end{mydef}
 
 The \ltl semantics being defined over a~Kripke structure
@@ -252,7 +252,7 @@ problem\cite{biere}.
 This thesis aims to use a~trace as a~Kripke structure path to be able
 to check such a trace model for formula validity. The deterministic
 nature of the trace makes the existential model checking problem
-equivalent to the universal as far as a~trace is considered.
+equivalent to the universal as far as single trace is considered.
 In text therefore only the term model checking is used.
 
 Although originally\cite{biere} the bounded model checking method was
@@ -443,9 +443,8 @@ $\epsilon$.
 
 Considering a~numerical simulation timeout and the filtering,
 divergent trace properties are dealt with as the timeout and filter
-ensure a~finite and discrete trace suitable for model checking. Moreover,
-the length of this trace is a~reasonable bound for the bounded model
-checking method\cite{biere}.
+ensure a~finite and discrete trace suitable for bounded model checking.
+Moreover, the length of this trace is a~reasonable bound for the method\cite{biere}.
 
 However, convergent trace properties need further care before a~trace
 may be checked for their validity. In particular, both the equilibrium
@@ -522,9 +521,9 @@ the numerical method, cycle detector and filter. The input parameters are:
 \begin{inparaenum}[\itshape a\upshape)]
 	\item{$\varphi$} the \ltl formula to use for $\sim$ relation
 		computation;
-	\item{$p_0$} the seed to be used both with the $\sim$ and numeric
+	\item{$p_0$} the seed to be used both with the $\sim$ and numerical
 		method initialization; and
-	\item{$k_{\omega}$} the maximal amount of steps the numeric method
+	\item{$k_{\omega}$} the maximal amount of steps the numerical method
 		should take.
 \end{inparaenum}
 
@@ -535,7 +534,7 @@ is checked. If the class changes, new representative is identified
 and is appended to the filtered trace.
 
 As an equilibrium may be encountered only while points remain within
-a~single class, the equilibrium property is checked in each numeric
+a~single class, the equilibrium property is checked in each numerical
 method step. The integration precision lost is considered a~point
 equilibrium case. In that event, a~self-loop on the last point is
 reported.
@@ -639,7 +638,7 @@ were inspired by a~naive approach to initial conditions
 problem\cite{sven}.
 
 \subsection*{Lotka-Volterra Experiment Design}
-The experiments consider a~set of traces starting in different seeds
+Experiments consider a~set of traces starting in different seeds
 and report the trace lengths and cycle presence distribution based
 on the comparison accuracy and the setup of atomic propositions.
 
@@ -696,11 +695,6 @@ cycles are being detected prematurely. On the other hand,
 if $\varepsilon$ value is too small, the cycle detector misses most of
 the cycles in filtered traces. Therefore, care has to be taken
 when configuring experiment $\varepsilon$ value.
-
-Original experimental data can be seen in\ref{att:results}.
-
-
-
 
 \subsection*{Bayramov Experiment Design}
 In this experiment, the effect of $\varepsilon$ setting is examined. In
@@ -801,7 +795,7 @@ bound by $O(|AP|^2)$\cite{biere}.
 When filtered, spiral traces after cycle detection of equilibrium point
 contain $O(|AP|^d)$ elements, $d$ being the count of dimensions atomic
 propositions refer to. This is because, unlike the loop, a~spiral trace
-penetrates into the constraints grid while converging to the equilibrium
+penetrates the constraints grid while converging to the equilibrium
 point rather than encounter only the circumference constraints.
 Therefore, the bound $k$ is of the same size. Together with the
 sub-formula sharing, which is of quadratic complexity with regard to $k$,
