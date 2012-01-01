@@ -55,7 +55,7 @@ if __name__ == "__main__":
 		if c.length > 0:
 			ue = oe(0, c.length, c.start)
 			r = ue(c.a)
-			print "Evaluated on seed: %s: %s" % (Z.T[0], r)
+			print "Evaluated on seed: %s: %s" % (Z.T[i], r)
 			if r:
 				pylab.plot(Z.T[i][0], Z.T[i][1], 'gs')
 			else:
